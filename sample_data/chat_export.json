@@ -1,0 +1,191 @@
+{
+  "_note": "Simulated WhatsApp export for CaseMinds demo. All details fictional.",
+  "case_id": "KL-DEMO-2024-001",
+  "export_date": "2024-03-15",
+  "platform": "WhatsApp",
+  "participants": {
+    "accused": {
+      "id": "accused_x",
+      "phone": "9876543210",
+      "display_name": "Arun"
+    },
+    "victim": {
+      "id": "victim_001",
+      "display_name": "Victim"
+    }
+  },
+  "messages": [
+    {
+      "id": 1,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "Hey, how are you? I'm Arun. Saw your profile.",
+      "timestamps": {
+        "sent":      "2024-03-06T14:22:00",
+        "delivered": "2024-03-06T14:22:03",
+        "read":      "2024-03-06T16:44:00"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Victim took 2.5 hours to read — not monitoring phone closely"
+    },
+    {
+      "id": 2,
+      "from": "victim_001",
+      "to": "accused_x",
+      "content": "Hi, I'm okay. Do I know you?",
+      "timestamps": {
+        "sent":      "2024-03-06T16:45:00",
+        "delivered": "2024-03-06T16:45:01",
+        "read":      "2024-03-06T16:45:30"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Accused read within 30 seconds — monitoring conversation closely"
+    },
+    {
+      "id": 3,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "No but I'd like to get to know you. You seem nice. How old are you?",
+      "timestamps": {
+        "sent":      "2024-03-06T16:47:00",
+        "delivered": "2024-03-06T16:47:01",
+        "read":      "2024-03-06T18:22:00"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Age solicitation — early grooming indicator"
+    },
+    {
+      "id": 4,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "You awake? I was thinking about you.",
+      "timestamps": {
+        "sent":      "2024-03-07T22:15:00",
+        "delivered": "2024-03-07T22:15:02",
+        "read":      "2024-03-07T22:44:00"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Late night contact — 10:15 PM. Odd hour signal."
+    },
+    {
+      "id": 5,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "Come near Lulu Mall Kochi on March 12 at 8 PM",
+      "timestamps": {
+        "sent":      "2024-03-09T22:14:00",
+        "delivered": "2024-03-09T22:14:02",
+        "read":      "2024-03-09T22:15:00"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Physical meeting proposed. Location: Lulu Mall Kochi. Time: 8PM March 12"
+    },
+    {
+      "id": 6,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "Let's move to Telegram, more private there. @arun_private_tg",
+      "timestamps": {
+        "sent":      "2024-03-09T23:02:00",
+        "delivered": "2024-03-09T23:02:01",
+        "read":      "2024-03-09T23:03:00"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Platform migration attempt. Telegram handle shared: @arun_private_tg"
+    },
+    {
+      "id": 7,
+      "from": "victim_001",
+      "to": "accused_x",
+      "content": "Why telegram?",
+      "timestamps": {
+        "sent":      "2024-03-10T08:14:00",
+        "delivered": "2024-03-10T08:14:01",
+        "read":      "2024-03-10T08:14:15"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Victim questioning platform change — not willingly complying"
+    },
+    {
+      "id": 8,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "Don't tell your parents about us okay? They won't understand.",
+      "timestamps": {
+        "sent":      "2024-03-10T23:44:00",
+        "delivered": "2024-03-10T23:44:02",
+        "read":      "2024-03-11T07:22:00"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "SECRECY INDUCTION. Victim took 7.5 hours to read — sent while victim asleep"
+    },
+    {
+      "id": 9,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "[This message was deleted]",
+      "timestamps": {
+        "sent":      "2024-03-11T22:30:00",
+        "delivered": "2024-03-11T22:30:01",
+        "read":      "2024-03-11T22:31:00"
+      },
+      "platform": "WhatsApp",
+      "deleted": true,
+      "ghost_signals": {
+        "read_receipt_exists": true,
+        "victim_reply_after": "2024-03-11T22:32:00",
+        "victim_reply_content": "yes okay I will come",
+        "_inference": "Deleted message likely contained meeting confirmation details"
+      },
+      "_analysis": "DELETED MESSAGE — GhostTrail flag. Victim reply confirms meeting arranged"
+    },
+    {
+      "id": 10,
+      "from": "accused_x",
+      "to": "victim_001",
+      "content": "I'm near Ernakulam, coming to meet you. Call me on 9876543210",
+      "timestamps": {
+        "sent":      "2024-03-12T19:55:00",
+        "delivered": "2024-03-12T19:55:02",
+        "read":      "2024-03-12T19:55:45"
+      },
+      "platform": "WhatsApp",
+      "deleted": false,
+      "_analysis": "Live location signal. Suspect moving toward victim. Read within 45 seconds."
+    }
+  ],
+  "timeline_gaps": [
+    {
+      "start": "2024-03-12T20:02:00",
+      "end":   "2024-03-13T02:14:00",
+      "duration_hours": 6.2,
+      "flag": "SUSPICIOUS_SILENCE",
+      "context": "Gap begins immediately after suspect said he was coming to meet victim"
+    }
+  ],
+  "analysis_summary": {
+    "total_messages": 10,
+    "accused_initiated": 8,
+    "victim_initiated": 2,
+    "deleted_messages": 1,
+    "odd_hour_messages": 4,
+    "grooming_signals": [
+      "AGE_SOLICITATION",
+      "SECRECY_INDUCTION",
+      "PLATFORM_MIGRATION",
+      "PHYSICAL_MEETING_PROPOSED",
+      "DELETED_MESSAGE_GHOST"
+    ],
+    "victim_avg_response_time_early": "2.5 hours",
+    "victim_avg_response_time_late": "45 seconds",
+    "latency_drop_flag": true
+  }
+}

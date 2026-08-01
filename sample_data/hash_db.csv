@@ -1,0 +1,5 @@
+id,phash,source,severity,added_date,notes
+known_001,a3f8c2d1b4e5f6a7,NCMEC_DB,CRITICAL,2023-01-15,Known harmful content hash
+known_002,1234567890abcdef,IWF_DB,CRITICAL,2023-03-22,Known harmful content hash
+known_003,fedcba0987654321,NCMEC_DB,HIGH,2023-06-10,Known harmful content hash
+known_004,a3f8c2d1b4e5f6a8,IWF_DB,CRITICAL,2023-09-05,Known harmful content hash

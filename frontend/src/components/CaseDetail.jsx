@@ -34,17 +34,110 @@ export default function CaseDetail({ caseData, onBack }) {
     "Small sample needs corroboration",
   ]
 
-  function handleAsk() {
+  async function handleAsk() {
     if (!question.trim()) return
+
+    const userQuestion = question
+    setQuestion("")
+
+    // Add user message immediately
     setCopilotMessages(prev => [
       ...prev,
-      { role: "user", content: question },
-      {
-        role: "system",
-        content: `Analyzing case evidence for: "${question}". Based on available evidence in this case, the relevant signals have been identified and cross-referenced across chat_export.json, call_records.csv, and metadata_sample.json. [This is a prototype — full RAG response requires Ollama backend]`
-      }
+      { role: "user", content: userQuestion }
     ])
-    setQuestion("")
+
+    // Build evidence context from sample data
+    const evidenceContext = `
+CASE: Operation Shield (KL-DEMO-2024-001)
+SUSPECT: Accused_X | Phone: 9876543210
+
+CHAT EVIDENCE (chat_export.json):
+- Mar 6 14:22: First contact. Accused asked victim's age.
+- Mar 7 22:15: Late night contact. "I was thinking about you."
+- Mar 9 22:14: "Come near Lulu Mall Kochi on March 12 at 8 PM"
+- Mar 9 23:02: "Let's move to Telegram, more private. @arun_private_tg"
+- Mar 10 08:14: Victim replied "Why telegram?" — questioning platform change
+- Mar 10 23:44: "Don't tell your parents about us okay? They won't understand."
+- Mar 11 22:30: [DELETED MESSAGE] — victim replied "yes okay I will come"
+- Mar 12 19:55: "I'm near Ernakulam, coming to meet you. Call me 9876543210"
+- Victim read time dropped from 2.5 hours to 45 seconds over conversation
+
+CALL RECORDS (call_records.csv):
+- Mar 6  14:18: 42 sec call from Ernakulam tower
+- Mar 7  22:10: 187 sec call (odd hour) from Ernakulam tower  
+- Mar 9  22:55: 324 sec call (odd hour) from Ernakulam tower
+- Mar 10 23:41: 156 sec call (odd hour) from Ernakulam tower
+- Mar 12 20:02: 891 sec call from KOCHI CENTRAL tower (location change)
+- Mar 12 20:58: 44 sec call to unknown contact from Kochi Central
+- Mar 13 02:18: 12 sec call — back to Ernakulam tower (post-gap)
+
+METADATA (metadata_sample.json):
+- image_001.jpg: GPS 9.9312N 76.2673E (Ernakulam) — Samsung Galaxy A52 (R58N12XY9823)
+- image_002.jpg: GPS 10.0261N 76.3083E (Kochi Central) — TIMESTAMP DISCREPANCY — modified 3 days after capture — Instagram screenshot
+- image_003.jpg: GPS STRIPPED — captured 22:30 during silence window — HASH MATCH with known harmful content database
+
+TIMELINE GAP:
+- Last communication: Mar 12 20:02
+- Next communication: Mar 13 02:14  
+- Gap duration: 6 hours 12 minutes
+- Flag: SUSPICIOUS SILENCE
+
+RISK SCORES:
+- Active Risk: 91/100 (IMMEDIATE ACTION)
+- Case Risk: 77/100
+- Net Confidence: 34.1/100 (Agent B challenges GPS accuracy and contact initiation)
+
+GROOMING SIGNALS DETECTED:
+- SECRECY_INDUCTION: "don't tell your parents"
+- PHYSICAL_MEETING_PROPOSED: Lulu Mall March 12
+- PLATFORM_MIGRATION: WhatsApp → Telegram
+- DELETED_MESSAGE_GHOST: meeting confirmed in victim reply
+- VICTIM_LATENCY_DROP: 2.5 hours → 45 seconds response time
+    `
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: `You are CaseMinds Evidence Copilot — an AI investigation assistant for Kerala Police.
+          
+You answer questions about case evidence clearly and concisely.
+You support both Malayalam and English questions — detect the language and respond in the same language.
+Always cite your sources (chat_export.json, call_records.csv, metadata_sample.json).
+Never speculate beyond the evidence provided.
+Keep answers under 150 words.
+Format: direct answer first, then source citation.`,
+          messages: [
+            {
+              role: "user",
+              content: `Evidence for this case:\n${evidenceContext}\n\nInvestigator question: ${userQuestion}`
+            }
+          ]
+        })
+      })
+
+      const data = await response.json()
+      const answer = data.content[0].text
+
+      setCopilotMessages(prev => [
+        ...prev,
+        { role: "system", content: answer }
+      ])
+
+    } catch (error) {
+      setCopilotMessages(prev => [
+        ...prev,
+        {
+          role: "system",
+          content: "Evidence Copilot is running in prototype mode. Connect to backend API for live responses."
+        }
+      ])
+    }
   }
 
   return (

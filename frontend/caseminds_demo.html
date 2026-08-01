@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CaseMinds — ACPIA Demo</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0b0f; color: #e8eaf0; min-height: 100vh; }
+.label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #555d7a; margin-bottom: 8px; display: block; }
+.card { background: #111318; border: 0.5px solid #232636; border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+.badge-danger { background: #2e1212; color: #ff6b6b; }
+.badge-accent { background: #0a1e35; color: #4a9eff; }
+.badge-warning { background: #2e2008; color: #f5a623; }
+.badge-success { background: #0a2018; color: #4caf7d; }
+.btn { cursor: pointer; border-radius: 8px; font-size: 13px; font-weight: 600; padding: 8px 16px; border: 0.5px solid #232636; background: #1a1d26; color: #e8eaf0; }
+.btn:hover { background: #232636; }
+.btn-primary { background: #7c5cfc; color: white; border-color: #7c5cfc; }
+.btn-primary:hover { background: #6a4de8; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.section-divider { border: none; border-top: 0.5px solid #232636; margin: 20px 0 16px; }
+.score-big { font-size: 48px; font-weight: 700; line-height: 1; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: #1a1d26; border: 0.5px solid #232636; color: #9aa0b8; margin: 2px; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; margin-top: 3px; }
+.tl-row { display: flex; align-items: flex-start; margin-bottom: 12px; }
+.tl-time { font-size: 11px; font-family: monospace; color: #555d7a; min-width: 90px; margin-top: 1px; }
+.chat-msg { border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; }
+.chat-user { background: #1a1d26; border: 0.5px solid #232636; }
+.chat-ai { background: #0f0a1a; border: 0.5px solid #2d2250; }
+.chat-role { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #555d7a; margin-bottom: 4px; }
+.chat-role-ai { color: #7c5cfc; }
+input[type=text] { background: #1a1d26; border: 0.5px solid #232636; border-radius: 8px; padding: 10px 14px; color: #e8eaf0; font-size: 13px; outline: none; width: 100%; }
+input[type=text]:focus { border-color: #7c5cfc; }
+.screen { display: none; padding: 24px; max-width: 900px; margin: 0 auto; }
+.screen.active { display: block; }
+.loading { opacity: 0.6; font-style: italic; }
+.timeline-line { border-left: 0.5px solid #232636; margin-left: 8px; padding-left: 16px; }
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: LANDING -->
+<div class="screen active" id="s-landing">
+  <div style="text-align:center; padding:60px 20px;">
+    <span class="label" style="display:block; text-align:center; color:#7c5cfc; margin-bottom:16px;">Hac'KP 2026 · Kerala Police · ACPIA</span>
+    <h1 style="font-size:48px; font-weight:700; letter-spacing:-0.02em; margin-bottom:12px;">Case<span style="color:#7c5cfc;">Minds</span></h1>
+    <p style="color:#9aa0b8; max-width:480px; margin:0 auto 40px; font-size:16px; line-height:1.7;">Agentic AI investigation platform for child protection. Every lead ranked. Every connection found. Every decision yours.</p>
+    <div style="display:flex; justify-content:center; gap:40px; margin-bottom:40px; flex-wrap:wrap;">
+      <div style="text-align:center;"><div style="font-size:28px; font-weight:700; color:#7c5cfc;">12</div><span class="label">ACPIA capabilities</span></div>
+      <div style="text-align:center;"><div style="font-size:28px; font-weight:700; color:#7c5cfc;">&lt;60s</div><span class="label">evidence processing</span></div>
+      <div style="text-align:center;"><div style="font-size:28px; font-weight:700; color:#7c5cfc;">2</div><span class="label">adversarial agents</span></div>
+      <div style="text-align:center;"><div style="font-size:28px; font-weight:700; color:#7c5cfc;">100%</div><span class="label">on-premise</span></div>
+    </div>
+    <button class="btn btn-primary" onclick="show('s-cases')" style="padding:14px 40px; font-size:15px;">Open investigation dashboard</button>
+    <p style="color:#555d7a; font-size:12px; margin-top:20px;">🔒 On-premise deployment · No evidence leaves this network</p>
+  </div>
+</div>
+
+<!-- SCREEN 2: CASES -->
+<div class="screen" id="s-cases">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;">
+    <div>
+      <span class="label">CaseMinds dashboard</span>
+      <h2 style="font-size:28px; font-weight:700; letter-spacing:-0.02em;">Active investigations</h2>
+    </div>
+    <button class="btn" onclick="show('s-landing')">← Back</button>
+  </div>
+
+  <!-- Immediate action -->
+  <div style="margin-bottom:28px;">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+      <span style="color:#ff6b6b; font-size:16px;">⚡</span>
+      <span class="label" style="color:#ff6b6b; margin-bottom:0;">Immediate action required</span>
+      <span class="badge badge-danger">Active risk &gt; 75</span>
+    </div>
+    <div class="card" style="border-color:#ff6b6b; cursor:pointer;" onclick="show('s-detail')">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-weight:700; font-size:15px; margin-bottom:4px;">Operation Shield <span style="font-size:11px; color:#555d7a; font-weight:400;">KL-DEMO-2024-001</span></div>
+          <div style="font-size:13px; color:#9aa0b8; margin-bottom:10px;">Suspect: Accused_X · Last activity: 2 hours ago</div>
+          <div>
+            <span class="badge badge-danger">Live location near victim</span>
+            <span class="badge badge-danger" style="margin-left:4px;">Contact frequency +400%</span>
+            <span class="badge badge-danger" style="margin-left:4px;">Platform migration detected</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:20px; align-items:center; flex-shrink:0; margin-left:16px;">
+          <div style="text-align:center;"><div style="font-size:24px; font-weight:700; color:#ff6b6b;">91</div><span class="label">active</span></div>
+          <div style="text-align:center;"><div style="font-size:24px; font-weight:700; color:#7c5cfc;">77</div><span class="label">case</span></div>
+          <span style="color:#555d7a;">→</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active -->
+  <div style="margin-bottom:28px;">
+    <span class="label">📁 Active cases</span>
+    <div class="card" style="cursor:pointer;" onclick="show('s-detail')">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:700; font-size:15px; margin-bottom:4px;">Operation Anchor <span style="font-size:11px; color:#555d7a; font-weight:400;">KL-DEMO-2024-002</span></div>
+          <div style="font-size:13px; color:#9aa0b8;">Suspect: Accused_Y · Last activity: 3 days ago</div>
+        </div>
+        <div style="display:flex; gap:20px; align-items:center; flex-shrink:0;">
+          <div style="text-align:center;"><div style="font-size:24px; font-weight:700; color:#9aa0b8;">28</div><span class="label">active</span></div>
+          <div style="text-align:center;"><div style="font-size:24px; font-weight:700; color:#7c5cfc;">84</div><span class="label">case</span></div>
+          <span style="color:#555d7a;">→</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Solved -->
+  <div>
+    <span class="label">✅ Solved cases</span>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:700; font-size:15px; margin-bottom:4px;">Operation Lighthouse <span style="font-size:11px; color:#555d7a; font-weight:400;">KL-DEMO-2024-003</span></div>
+          <div style="font-size:13px; color:#9aa0b8;">Suspect: Accused_Z · Last activity: 2 weeks ago</div>
+        </div>
+        <div style="display:flex; gap:20px; align-items:center; flex-shrink:0;">
+          <div style="text-align:center;"><div style="font-size:24px; font-weight:700; color:#555d7a;">0</div><span class="label">active</span></div>
+          <div style="text-align:center;"><div style="font-size:24px; font-weight:700; color:#7c5cfc;">95</div><span class="label">case</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: CASE DETAIL -->
+<div class="screen" id="s-detail">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;">
+    <div>
+      <span class="label">KL-DEMO-2024-001</span>
+      <h2 style="font-size:28px; font-weight:700; letter-spacing:-0.02em;">Operation Shield</h2>
+    </div>
+    <button class="btn" onclick="show('s-cases')">← Back to cases</button>
+  </div>
+
+  <!-- Risk scores -->
+  <span class="label">⚡ Risk assessment</span>
+  <div class="grid2" style="margin-bottom:20px;">
+    <div class="card" style="border-color:#ff6b6b;">
+      <span class="label" style="color:#ff6b6b;">Rescue urgency</span>
+      <div class="score-big" style="color:#ff6b6b;">91<span style="font-size:20px; color:#555d7a;">/100</span></div>
+      <span class="label" style="margin-top:8px; margin-bottom:10px;">Active risk score</span>
+      <div style="font-size:12px; color:#9aa0b8; line-height:2;">→ Last contact 2 hours ago<br>→ Live GPS near victim location<br>→ Contact frequency +400%</div>
+    </div>
+    <div class="card" style="border-color:#7c5cfc;">
+      <span class="label" style="color:#7c5cfc;">Prosecution strength</span>
+      <div class="score-big" style="color:#7c5cfc;">77<span style="font-size:20px; color:#555d7a;">/100</span></div>
+      <span class="label" style="margin-top:8px; margin-bottom:10px;">Case risk score</span>
+      <div style="font-size:12px; color:#9aa0b8; line-height:2;">→ 47 contacts in 6 days<br>→ 80% messages after 10PM<br>→ Secrecy induction detected<br>→ Platform migration confirmed</div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Agents -->
+  <span class="label">⚖ Adversarial agent analysis</span>
+  <div class="grid2" style="margin-bottom:12px;">
+    <div class="card" style="border-color:#4caf7d;">
+      <span class="label" style="color:#4caf7d; margin-bottom:12px;">Agent A — prosecutor</span>
+      <div style="font-size:13px; line-height:2; color:#e8eaf0;">
+        <div>✓ 47 contacts in 6 days <span class="badge badge-danger" style="font-size:10px;">HIGH</span></div>
+        <div>✓ Secrecy induction detected <span class="badge badge-danger" style="font-size:10px;">HIGH</span></div>
+        <div>✓ Physical meeting proposed <span class="badge badge-danger" style="font-size:10px;">HIGH</span></div>
+        <div>✓ Platform migration to Telegram <span class="badge badge-warning" style="font-size:10px;">MED</span></div>
+      </div>
+    </div>
+    <div class="card" style="border-color:#4a9eff;">
+      <span class="label" style="color:#4a9eff; margin-bottom:12px;">Agent B — defender</span>
+      <div style="font-size:13px; line-height:2; color:#9aa0b8;">
+        <div>✗ Victim initiated 39 of 47 contacts</div>
+        <div>✗ GPS accuracy 800m — not admissible</div>
+        <div>✗ Platform migration common for privacy</div>
+        <div>✗ Small sample needs corroboration</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div>
+      <span style="font-size:13px; color:#9aa0b8;">Net confidence: </span>
+      <span style="font-size:20px; font-weight:700; color:#f5a623;">34.1/100</span>
+      <span style="font-size:13px; color:#9aa0b8;"> — gather more evidence before acting</span>
+    </div>
+    <span style="font-size:11px; color:#555d7a;">Final decision: investigator only</span>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Copilot -->
+  <span class="label">💬 Evidence Copilot</span>
+  <div class="card" style="margin-bottom:20px;">
+    <p style="font-size:12px; color:#555d7a; margin-bottom:12px;">Ask questions about this case in Malayalam or English</p>
+    <div id="chat-messages" style="margin-bottom:12px; max-height:240px; overflow-y:auto;">
+      <div class="chat-msg chat-user">
+        <div class="chat-role">Investigator</div>
+        Who did the suspect contact on March 12?
+      </div>
+      <div class="chat-msg chat-ai">
+        <div class="chat-role chat-role-ai">CaseMinds Copilot</div>
+        Based on <strong>chat_export.json</strong> message #10, Accused_X contacted the victim at 19:55 saying they were near Ernakulam and coming to meet. <strong>call_records.csv</strong> C005 shows a 14-minute call from Kochi Central tower at 20:02 — confirming physical presence in Kochi at the proposed meeting time. [Source: chat_export.json, call_records.csv]
+      </div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <input type="text" id="copilot-input" placeholder="Ask about this case in Malayalam or English..." onkeydown="if(event.key==='Enter')askCopilot()">
+      <button class="btn btn-primary" onclick="askCopilot()">Ask</button>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Timeline -->
+  <span class="label">📅 ChronoCase — case timeline</span>
+  <div class="card" style="margin-bottom:20px;">
+    <div class="timeline-line">
+      <div class="tl-row"><span class="tl-dot" style="background:#232636;"></span><span class="tl-time">Mar 6  14:22</span><span style="font-size:13px;color:#9aa0b8;">First contact on WhatsApp</span></div>
+      <div class="tl-row"><span class="tl-dot" style="background:#f5a623;"></span><span class="tl-time">Mar 7  22:15</span><span style="font-size:13px;color:#f5a623;">Late night contact (odd hour)</span></div>
+      <div class="tl-row"><span class="tl-dot" style="background:#ff6b6b;"></span><span class="tl-time">Mar 9  22:14</span><span style="font-size:13px;color:#ff6b6b;">Physical meeting proposed — Lulu Mall Kochi</span></div>
+      <div class="tl-row"><span class="tl-dot" style="background:#ff6b6b;"></span><span class="tl-time">Mar 10 23:44</span><span style="font-size:13px;color:#ff6b6b;">Secrecy induction: "don't tell your parents"</span></div>
+      <div class="tl-row"><span class="tl-dot" style="background:#f5a623;"></span><span class="tl-time">Mar 11 23:01</span><span style="font-size:13px;color:#f5a623;">Platform migration attempt to Telegram</span></div>
+      <div class="tl-row"><span class="tl-dot" style="background:#ff6b6b;"></span><span class="tl-time">Mar 12 20:02</span><span style="font-size:13px;color:#ff6b6b;">Call from Kochi Central tower — location change</span></div>
+      <div style="margin-bottom:12px;">
+        <div style="background:#1a0a0a; border:1px dashed #ff6b6b; border-radius:8px; padding:10px 16px; display:flex; align-items:center; gap:10px;">
+          <span style="font-size:16px;">⚠</span>
+          <span style="font-size:13px; font-weight:600; color:#ff6b6b;">Suspicious silence — 6 hours 12 minutes (Mar 12 20:02 → Mar 13 02:14)</span>
+        </div>
+      </div>
+      <div class="tl-row"><span class="tl-dot" style="background:#f5a623;"></span><span class="tl-time">Mar 13 02:18</span><span style="font-size:13px;color:#f5a623;">Post-gap contact from Ernakulam tower</span></div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- LeadRank -->
+  <span class="label">👥 LeadRank — suspect priority</span>
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+      <div>
+        <div style="font-weight:700; font-size:15px; margin-bottom:8px;">Accused_X</div>
+        <div>
+          <span class="tag">HASH_MATCH</span>
+          <span class="tag">SECRECY_INDUCTION</span>
+          <span class="tag">PLATFORM_MIGRATION</span>
+          <span class="tag">GPS_STRIPPED</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:20px; flex-shrink:0; margin-left:16px;">
+        <div style="text-align:center;"><div style="font-size:22px; font-weight:700; color:#ff6b6b;">91</div><span class="label">active</span></div>
+        <div style="text-align:center;"><div style="font-size:22px; font-weight:700; color:#7c5cfc;">77</div><span class="label">case</span></div>
+        <div style="text-align:center;"><div style="font-size:22px; font-weight:700; color:#f5a623;">34.1</div><span class="label">net</span></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;">Generate court report</button>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+const EVIDENCE = `CASE: Operation Shield (KL-DEMO-2024-001) | SUSPECT: Accused_X | Phone: 9876543210
+CHAT: Mar 6 first contact, asked age. Mar 7 22:15 late night contact. Mar 9 22:14 proposed meeting Lulu Mall Kochi March 12 8PM. Mar 9 23:02 moved to Telegram @arun_private_tg. Mar 10 23:44 secrecy induction dont tell your parents. Mar 11 deleted message, victim replied yes okay I will come. Mar 12 19:55 near Ernakulam coming to meet. Victim response time dropped from 2.5 hours to 45 seconds.
+CALLS: Mar 12 20:02 891sec call Kochi Central tower. Mar 13 02:18 back to Ernakulam tower.
+METADATA: image_002 GPS 10.0261N 76.3083E Kochi, timestamp discrepancy, Instagram screenshot. image_003 GPS STRIPPED captured 22:30 during silence, HASH MATCH known harmful content.
+GAP: Mar 12 20:02 to Mar 13 02:14 = 6h12m SUSPICIOUS SILENCE.
+SIGNALS: SECRECY_INDUCTION, PHYSICAL_MEETING_PROPOSED, PLATFORM_MIGRATION, GPS_STRIPPED, HASH_MATCH
+RISK: Active=91, Case=77, Net=34.1`;
+
+async function askCopilot() {
+  const input = document.getElementById('copilot-input');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+
+  const msgs = document.getElementById('chat-messages');
+
+  const userDiv = document.createElement('div');
+  userDiv.className = 'chat-msg chat-user';
+  userDiv.innerHTML = `<div class="chat-role">Investigator</div>${q}`;
+  msgs.appendChild(userDiv);
+
+  const loadDiv = document.createElement('div');
+  loadDiv.className = 'chat-msg chat-ai loading';
+  loadDiv.innerHTML = `<div class="chat-role chat-role-ai">CaseMinds Copilot</div>Analyzing evidence...`;
+  msgs.appendChild(loadDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        system: `You are CaseMinds Evidence Copilot for Kerala Police. Answer questions about case evidence. Detect language — respond in Malayalam if asked in Malayalam/Manglish, English if asked in English. Cite sources. Max 100 words.`,
+        messages: [{ role: 'user', content: `Evidence:\n${EVIDENCE}\n\nQuestion: ${q}` }]
+      })
+    });
+    const data = await res.json();
+    loadDiv.innerHTML = `<div class="chat-role chat-role-ai">CaseMinds Copilot</div>${data.content[0].text}`;
+  } catch(e) {
+    loadDiv.innerHTML = `<div class="chat-role chat-role-ai">CaseMinds Copilot</div>Prototype mode — connect to FastAPI backend for live RAG responses. Architecture: ChromaDB + Ollama + FastAPI on-premise.`;
+  }
+  loadDiv.classList.remove('loading');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>

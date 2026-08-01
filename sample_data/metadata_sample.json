@@ -1,0 +1,60 @@
+{
+  "_note": "Simulated EXIF metadata output. All details fictional.",
+  "case_id": "KL-DEMO-2024-001",
+  "files": [
+    {
+      "file": "image_001.jpg",
+      "gps_lat": 9.9312,
+      "gps_lng": 76.2673,
+      "gps_accuracy_metres": 15,
+      "datetime_original": "2024-03-06T14:20:00",
+      "file_modified":     "2024-03-06T14:20:00",
+      "make": "Samsung",
+      "model": "Galaxy A52",
+      "device_id": "R58N12XY9823",
+      "software": "Camera 12.0",
+      "is_screenshot": false,
+      "timestamp_discrepancy": false,
+      "phash": "a3f8c2d1b4e5f6a7",
+      "_analysis": "Clean image. GPS places it in Ernakulam. Same device as other evidence."
+    },
+    {
+      "file": "image_002.jpg",
+      "gps_lat": 10.0261,
+      "gps_lng": 76.3083,
+      "gps_accuracy_metres": 800,
+      "datetime_original": "2024-03-12T20:14:00",
+      "file_modified":     "2024-03-15T09:22:00",
+      "make": "Samsung",
+      "model": "Galaxy A52",
+      "device_id": "R58N12XY9823",
+      "software": "Instagram 289.0",
+      "is_screenshot": true,
+      "timestamp_discrepancy": true,
+      "_analysis": "ANOMALY: file modified 3 days after capture. Screenshot not original photo. GPS near Kochi Central — matches cell tower C005."
+    },
+    {
+      "file": "image_003.jpg",
+      "gps_lat": null,
+      "gps_lng": null,
+      "datetime_original": "2024-03-12T22:30:00",
+      "file_modified":     "2024-03-12T22:30:00",
+      "make": "Samsung",
+      "model": "Galaxy A52",
+      "device_id": "R58N12XY9823",
+      "software": "Camera 12.0",
+      "is_screenshot": false,
+      "timestamp_discrepancy": false,
+      "phash": "a3f8c2d1b4e5f6a8",
+      "_analysis": "GPS stripped. Taken during 6 hour silence window at 22:30. Same device. GPS removal may be deliberate."
+    }
+  ],
+  "device_summary": {
+    "device_id": "R58N12XY9823",
+    "make": "Samsung Galaxy A52",
+    "appears_in_files": ["image_001.jpg", "image_002.jpg", "image_003.jpg"],
+    "first_seen": "2024-03-06T14:20:00",
+    "last_seen":  "2024-03-12T22:30:00",
+    "_analysis": "Same device across all evidence. Establishes single owner pattern."
+  }
+}

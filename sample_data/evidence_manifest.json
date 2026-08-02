@@ -1,0 +1,109 @@
+{
+  "case_id": "KL-DEMO-2024-001",
+  "case_name": "Operation Shield",
+  "created_at": "2024-03-15T10:00:00",
+  "created_by": "officer_001",
+  "status": "ACTIVE",
+  "evidence_items": [
+    {
+      "id": "EVD-001",
+      "filename": "chat_export.json",
+      "type": "chat_export",
+      "sha256": "3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e",
+      "uploaded_at": "2024-03-15T10:05:00",
+      "uploaded_by": "officer_001",
+      "pipelines_run": ["nlp", "rag_indexer", "timeline_builder"],
+      "flags": [
+        "SECRECY_INDUCTION",
+        "PLATFORM_MIGRATION",
+        "PHYSICAL_MEETING_PROPOSED",
+        "DELETED_MESSAGE_GHOST"
+      ],
+      "status": "PROCESSED"
+    },
+    {
+      "id": "EVD-002",
+      "filename": "call_records.csv",
+      "type": "call_records",
+      "sha256": "4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f",
+      "uploaded_at": "2024-03-15T10:06:00",
+      "uploaded_by": "officer_001",
+      "pipelines_run": ["timeline_builder", "location_mapper"],
+      "flags": [
+        "LOCATION_CHANGE_DETECTED",
+        "POST_GAP_CONTACT"
+      ],
+      "status": "PROCESSED"
+    },
+    {
+      "id": "EVD-003",
+      "filename": "image_001.jpg",
+      "type": "image",
+      "sha256": "5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a",
+      "uploaded_at": "2024-03-15T10:07:00",
+      "uploaded_by": "officer_001",
+      "pipelines_run": ["hash_match", "metadata", "synthetic_detection"],
+      "flags": [],
+      "status": "PROCESSED"
+    },
+    {
+      "id": "EVD-004",
+      "filename": "image_002.jpg",
+      "type": "image",
+      "sha256": "6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b",
+      "uploaded_at": "2024-03-15T10:07:00",
+      "uploaded_by": "officer_001",
+      "pipelines_run": ["hash_match", "metadata", "synthetic_detection"],
+      "flags": [
+        "TIMESTAMP_DISCREPANCY",
+        "IS_SCREENSHOT"
+      ],
+      "status": "PROCESSED"
+    },
+    {
+      "id": "EVD-005",
+      "filename": "image_003.jpg",
+      "type": "image",
+      "sha256": "7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c",
+      "uploaded_at": "2024-03-15T10:07:00",
+      "uploaded_by": "officer_001",
+      "pipelines_run": ["hash_match", "metadata", "synthetic_detection"],
+      "flags": [
+        "HASH_MATCH_DETECTED",
+        "GPS_STRIPPED",
+        "CAPTURED_DURING_SILENCE_WINDOW"
+      ],
+      "status": "LOCKED"
+    }
+  ],
+  "audit_log": [
+    {
+      "action": "CASE_CREATED",
+      "officer": "officer_001",
+      "timestamp": "2024-03-15T10:00:00",
+      "ip": "192.168.1.45"
+    },
+    {
+      "action": "EVIDENCE_UPLOADED",
+      "officer": "officer_001",
+      "evidence_id": "EVD-001",
+      "timestamp": "2024-03-15T10:05:00",
+      "ip": "192.168.1.45"
+    },
+    {
+      "action": "HASH_FLAG_RAISED",
+      "officer": "system",
+      "evidence_id": "EVD-005",
+      "timestamp": "2024-03-15T10:07:12",
+      "ip": "system"
+    },
+    {
+      "action": "EVIDENCE_LOCKED",
+      "officer": "system",
+      "evidence_id": "EVD-005",
+      "timestamp": "2024-03-15T10:07:12",
+      "ip": "system",
+      "reason": "Hash match detected"
+    }
+  ]
+}

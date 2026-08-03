@@ -1,6 +1,7 @@
 import { useState } from "react"
 import EvidenceUpload from "./EvidenceUpload"
 import Annotations from "./Annotations"
+import CourtReport from "./CourtReport"
 
 export default function CaseDetail({ caseData, onBack, officer }) {
   const [showUpload, setShowUpload] = useState(false)
@@ -11,6 +12,7 @@ export default function CaseDetail({ caseData, onBack, officer }) {
     }
   ])
   const [question, setQuestion] = useState("")
+  const [showReport, setShowReport] = useState(false)
 
 //   const timelineEvents = [
 //     { date: "Mar 6  14:22", event: "First contact on WhatsApp", flag: null },
@@ -443,14 +445,18 @@ export default function CaseDetail({ caseData, onBack, officer }) {
             </div>
           </div>
         </div>
-        <button style={{
-          background: "#7c5cfc", border: "none",
-          borderRadius: "6px", padding: "10px 20px",
-          color: "white", fontSize: "13px",
-          fontWeight: 600, cursor: "pointer", width: "100%"
-        }}>
-          Generate Court Report
-        </button>
+        <button
+  onClick={() => setShowReport(true)}
+  style={{
+    background: "#7c5cfc", border: "none",
+    borderRadius: "6px", padding: "10px 20px",
+    color: "white", fontSize: "13px",
+    fontWeight: 600, cursor: "pointer", width: "100%"
+  }}
+  
+>
+  Generate Court Report
+</button>
       </div>
 
     </div>

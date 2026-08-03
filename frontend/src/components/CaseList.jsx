@@ -3,10 +3,6 @@ import AccessRequest from "./AccessRequest"
 
 export default function CaseList({ cases, officer, onSelectCase, onBack }) {
   const [showRequestModal, setShowRequestModal] = useState(false)
-
-  
-  const activeCases    = cases.filter(c => !c.immediateAction && c.status === "ACTIVE")
-  const solvedCases    = cases.filter(c => c.status === "SOLVED")
   const [searchQuery, setSearchQuery] = useState("")
   const filtered       = searchCases(cases, searchQuery)
 const immediateCases = searchQuery

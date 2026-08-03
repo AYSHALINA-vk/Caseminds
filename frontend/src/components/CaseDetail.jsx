@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { useState } from "react"
+import EvidenceUpload from "./EvidenceUpload"
 
 export default function CaseDetail({ caseData, onBack }) {
   const [copilotMessages, setCopilotMessages] = useState([
@@ -8,6 +10,7 @@ export default function CaseDetail({ caseData, onBack }) {
     }
   ])
   const [question, setQuestion] = useState("")
+  const [showUpload, setShowUpload] = useState(false)
 
   const timelineEvents = [
     { date: "Mar 6  14:22", event: "First contact on WhatsApp", flag: null },
@@ -33,6 +36,15 @@ export default function CaseDetail({ caseData, onBack }) {
     "Platform migration common for privacy",
     "Small sample needs corroboration",
   ]
+
+  {/* Upload modal */}
+{showUpload && (
+  <EvidenceUpload
+    officer={officer}
+    caseId={caseData.id}
+    onClose={() => setShowUpload(false)}
+  />
+)}
 
 async function handleAsk() {
     if (!question.trim()) return
@@ -114,6 +126,22 @@ async function handleAsk() {
           ← Back to Cases
         </button>
       </div>
+      <button
+  onClick={() => setShowUpload(true)}
+  style={{
+    background: "#7c5cfc",
+    border: "none",
+    borderRadius: "6px",
+    color: "white",
+    padding: "8px 16px",
+    cursor: "pointer",
+    fontSize: "13px",
+    fontWeight: 600,
+    marginRight: "8px"
+  }}
+>
+  + Upload evidence
+</button>
 
       {/* ── SECTION A: DUAL RISK SCORES ── */}
       <SectionLabel label="⚡ Risk Assessment" />

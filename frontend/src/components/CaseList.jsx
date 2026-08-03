@@ -1,81 +1,165 @@
-export default function CaseList({ cases, onSelectCase, onBack }) {
+import { useState } from "react"
+import AccessRequest from "./AccessRequest"
+
+export default function CaseList({ cases, officer, onSelectCase, onBack }) {
+  const [showRequestModal, setShowRequestModal] = useState(false)
+
   const immediateCases = cases.filter(c => c.immediateAction)
-  const activeCases = cases.filter(c => !c.immediateAction && c.status === "ACTIVE")
-  const solvedCases = cases.filter(c => c.status === "SOLVED")
+  const activeCases    = cases.filter(c => !c.immediateAction && c.status === "ACTIVE")
+  const solvedCases    = cases.filter(c => c.status === "SOLVED")
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "40px 24px" }}>
-      
+
+      {/* Request modal — shows on top when triggered */}
+      {showRequestModal && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(0,0,0,0.85)",
+          zIndex: 200,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "24px"
+        }}>
+          <div style={{
+            background: "#0a0b0f",
+            border: "0.5px solid #232636",
+            borderRadius: "12px",
+            width: "100%",
+            maxWidth: "520px",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            position: "relative"
+          }}>
+            {/* Close button */}
+            <button
+              onClick={() => setShowRequestModal(false)}
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                background: "transparent",
+                border: "0.5px solid #232636",
+                borderRadius: "6px",
+                color: "#555d7a",
+                padding: "4px 10px",
+                fontSize: "13px",
+                cursor: "pointer",
+                zIndex: 10
+              }}
+            >
+              ✕
+            </button>
+            <AccessRequest
+              officer={officer}
+              cases={cases}
+              onApproved={() => setShowRequestModal(false)}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{
         display: "flex",
-        alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: "40px"
+        alignItems: "center",
+        marginBottom: "28px"
       }}>
         <div>
-          <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.15em",
-            color: "#7c5cfc",
-            textTransform: "uppercase",
+          <span style={{
+            fontSize: "11px", fontWeight: 600,
+            letterSpacing: "0.15em", color: "#555d7a",
+            textTransform: "uppercase", display: "block",
             marginBottom: "6px"
           }}>
-            CaseMinds Dashboard
-          </div>
-          <h1 style={{
-            fontSize: "28px",
-            fontWeight: 700,
+            CaseMinds dashboard
+          </span>
+          <h2 style={{
+            fontSize: "28px", fontWeight: 700,
             letterSpacing: "-0.02em"
           }}>
-            Active Investigations
-          </h1>
+            Active investigations
+          </h2>
         </div>
-        <button onClick={onBack} style={{
-          background: "transparent",
-          border: "1px solid #232636",
-          borderRadius: "6px",
-          color: "#9aa0b8",
-          padding: "8px 16px",
-          cursor: "pointer",
-          fontSize: "13px"
-        }}>
-          ← Back
-        </button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          {officer?.role === "JUNIOR" && (
+            <button
+              onClick={() => setShowRequestModal(true)}
+              style={{
+                background: "#0f0a1a",
+                border: "0.5px solid #7c5cfc",
+                borderRadius: "6px",
+                color: "#7c5cfc",
+                padding: "8px 14px",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: "pointer"
+              }}
+            >
+              + Request case access
+            </button>
+          )}
+          <button onClick={onBack} style={{
+            background: "transparent",
+            border: "0.5px solid #232636",
+            borderRadius: "6px",
+            color: "#9aa0b8",
+            padding: "8px 16px",
+            cursor: "pointer",
+            fontSize: "13px"
+          }}>
+            ← Back
+          </button>
+        </div>
       </div>
 
-      {/* IMMEDIATE ACTION LANE */}
+      {/* Junior access notice */}
+      {officer?.role === "JUNIOR" && (
+        <div style={{
+          background: "#0f0a1a",
+          border: "0.5px solid #2d2250",
+          borderRadius: "8px",
+          padding: "12px 16px",
+          marginBottom: "20px",
+          fontSize: "12px",
+          color: "#7c5cfc",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+          <span>
+            Showing {cases.length} approved case{cases.length !== 1 ? "s" : ""}.
+            Other cases require Senior Inspector approval.
+          </span>
+        </div>
+      )}
+
+      {/* IMMEDIATE ACTION */}
       {immediateCases.length > 0 && (
-        <div style={{ marginBottom: "40px" }}>
+        <div style={{ marginBottom: "28px" }}>
           <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            marginBottom: "12px"
+            display: "flex", alignItems: "center",
+            gap: "8px", marginBottom: "10px"
           }}>
-            <span style={{ fontSize: "16px" }}>⚡</span>
+            <span style={{ color: "#ff6b6b", fontSize: "16px" }}>⚡</span>
             <span style={{
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: "0.15em",
-              color: "#ff6b6b",
+              fontSize: "11px", fontWeight: 600,
+              letterSpacing: "0.15em", color: "#ff6b6b",
               textTransform: "uppercase"
             }}>
-              Immediate Action Required
+              Immediate action required
             </span>
             <span style={{
-              fontSize: "10px",
-              background: "#2e1212",
-              color: "#ff6b6b",
-              padding: "2px 8px",
-              borderRadius: "4px",
-              fontWeight: 600
+              fontSize: "10px", background: "#2e1212",
+              color: "#ff6b6b", padding: "2px 8px",
+              borderRadius: "4px", fontWeight: 600
             }}>
               Active Risk &gt; 75
             </span>
           </div>
-
           {immediateCases.map(c => (
             <CaseCard
               key={c.id}
@@ -88,48 +172,80 @@ export default function CaseList({ cases, onSelectCase, onBack }) {
       )}
 
       {/* ACTIVE CASES */}
-      <div style={{ marginBottom: "40px" }}>
-        <div style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "0.15em",
-          color: "#555d7a",
-          textTransform: "uppercase",
-          marginBottom: "12px"
-        }}>
-          📁 Active Cases
+      {activeCases.length > 0 && (
+        <div style={{ marginBottom: "28px" }}>
+          <span style={{
+            fontSize: "11px", fontWeight: 600,
+            letterSpacing: "0.15em", color: "#555d7a",
+            textTransform: "uppercase", display: "block",
+            marginBottom: "10px"
+          }}>
+            📁 Active cases
+          </span>
+          {activeCases.map(c => (
+            <CaseCard
+              key={c.id}
+              caseData={c}
+              onClick={() => onSelectCase(c)}
+              urgent={false}
+            />
+          ))}
         </div>
-        {activeCases.map(c => (
-          <CaseCard
-            key={c.id}
-            caseData={c}
-            onClick={() => onSelectCase(c)}
-            urgent={false}
-          />
-        ))}
-      </div>
+      )}
 
-      {/* SOLVED CASES */}
-      <div>
-        <div style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "0.15em",
-          color: "#555d7a",
-          textTransform: "uppercase",
-          marginBottom: "12px"
-        }}>
-          ✅ Solved Cases
+      {/* SOLVED */}
+      {solvedCases.length > 0 && (
+        <div>
+          <span style={{
+            fontSize: "11px", fontWeight: 600,
+            letterSpacing: "0.15em", color: "#555d7a",
+            textTransform: "uppercase", display: "block",
+            marginBottom: "10px"
+          }}>
+            ✅ Solved cases
+          </span>
+          {solvedCases.map(c => (
+            <CaseCard
+              key={c.id}
+              caseData={c}
+              onClick={() => onSelectCase(c)}
+              urgent={false}
+            />
+          ))}
         </div>
-        {solvedCases.map(c => (
-          <CaseCard
-            key={c.id}
-            caseData={c}
-            onClick={() => onSelectCase(c)}
-            urgent={false}
-          />
-        ))}
-      </div>
+      )}
+
+      {/* Empty state for junior */}
+      {cases.length === 0 && officer?.role === "JUNIOR" && (
+        <div style={{
+          textAlign: "center",
+          padding: "60px 24px",
+          color: "#555d7a"
+        }}>
+          <div style={{ fontSize: "40px", marginBottom: "16px" }}>🔒</div>
+          <p style={{ fontSize: "15px", marginBottom: "8px", color: "#9aa0b8" }}>
+            No approved cases yet
+          </p>
+          <p style={{ fontSize: "13px", marginBottom: "24px" }}>
+            Request access from your Senior Inspector
+          </p>
+          <button
+            onClick={() => setShowRequestModal(true)}
+            style={{
+              background: "#7c5cfc",
+              border: "none",
+              borderRadius: "8px",
+              padding: "12px 24px",
+              color: "white",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer"
+            }}
+          >
+            + Request case access
+          </button>
+        </div>
+      )}
     </div>
   )
 }
@@ -140,7 +256,7 @@ function CaseCard({ caseData, onClick, urgent }) {
       onClick={onClick}
       style={{
         background: urgent ? "#1a0a0a" : "#111318",
-        border: `1px solid ${urgent ? "#ff6b6b" : "#232636"}`,
+        border: `0.5px solid ${urgent ? "#ff6b6b" : "#232636"}`,
         borderRadius: "10px",
         padding: "20px 24px",
         marginBottom: "12px",
@@ -152,40 +268,28 @@ function CaseCard({ caseData, onClick, urgent }) {
     >
       <div>
         <div style={{
-          fontWeight: 600,
-          fontSize: "15px",
-          marginBottom: "4px"
+          fontWeight: 700, fontSize: "15px", marginBottom: "4px"
         }}>
           {caseData.name}
           <span style={{
-            fontSize: "11px",
-            color: "#555d7a",
-            fontWeight: 400,
-            marginLeft: "8px"
+            fontSize: "11px", color: "#555d7a",
+            fontWeight: 400, marginLeft: "8px"
           }}>
             {caseData.id}
           </span>
         </div>
         <div style={{
-          fontSize: "13px",
-          color: "#9aa0b8"
+          fontSize: "13px", color: "#9aa0b8", marginBottom: urgent ? "10px" : 0
         }}>
-          Suspect: {caseData.suspect} · Last activity: {caseData.lastActivity}
+          Suspect: {caseData.suspect} · Last activity: {caseData.lastActivity || "—"}
         </div>
-        {urgent && (
-          <div style={{
-            marginTop: "8px",
-            display: "flex",
-            gap: "8px",
-            flexWrap: "wrap"
-          }}>
+        {urgent && caseData.signals && (
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
             {caseData.signals.map((s, i) => (
               <span key={i} style={{
-                fontSize: "11px",
-                background: "#2e1212",
-                color: "#ff6b6b",
-                padding: "2px 8px",
-                borderRadius: "4px"
+                fontSize: "11px", background: "#2e1212",
+                color: "#ff6b6b", padding: "2px 8px",
+                borderRadius: "4px", fontWeight: 600
               }}>
                 {s}
               </span>
@@ -193,53 +297,38 @@ function CaseCard({ caseData, onClick, urgent }) {
           </div>
         )}
       </div>
-
-      {/* Risk scores */}
       <div style={{
-        display: "flex",
-        gap: "16px",
-        alignItems: "center"
+        display: "flex", gap: "20px",
+        alignItems: "center", flexShrink: 0, marginLeft: "16px"
       }}>
         <div style={{ textAlign: "center" }}>
           <div style={{
-            fontSize: "22px",
-            fontWeight: 700,
+            fontSize: "24px", fontWeight: 700,
             color: caseData.activeRisk > 75 ? "#ff6b6b" : "#9aa0b8"
           }}>
             {caseData.activeRisk}
           </div>
           <div style={{
-            fontSize: "9px",
-            color: "#555d7a",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em"
+            fontSize: "9px", color: "#555d7a",
+            textTransform: "uppercase", letterSpacing: "0.1em"
           }}>
-            Active Risk
+            Active
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
           <div style={{
-            fontSize: "22px",
-            fontWeight: 700,
-            color: "#7c5cfc"
+            fontSize: "24px", fontWeight: 700, color: "#7c5cfc"
           }}>
             {caseData.caseRisk}
           </div>
           <div style={{
-            fontSize: "9px",
-            color: "#555d7a",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em"
+            fontSize: "9px", color: "#555d7a",
+            textTransform: "uppercase", letterSpacing: "0.1em"
           }}>
-            Case Risk
+            Case
           </div>
         </div>
-        <div style={{
-          color: "#555d7a",
-          fontSize: "18px"
-        }}>
-          →
-        </div>
+        <span style={{ color: "#555d7a", fontSize: "18px" }}>→</span>
       </div>
     </div>
   )

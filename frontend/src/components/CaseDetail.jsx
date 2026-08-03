@@ -1,8 +1,9 @@
 import { useState } from "react"
-import { useState } from "react"
 import EvidenceUpload from "./EvidenceUpload"
+import Annotations from "./Annotations"
 
-export default function CaseDetail({ caseData, onBack }) {
+export default function CaseDetail({ caseData, onBack, officer }) {
+  const [showUpload, setShowUpload] = useState(false)
   const [copilotMessages, setCopilotMessages] = useState([
     {
       role: "system",
@@ -10,7 +11,6 @@ export default function CaseDetail({ caseData, onBack }) {
     }
   ])
   const [question, setQuestion] = useState("")
-  const [showUpload, setShowUpload] = useState(false)
 
   const timelineEvents = [
     { date: "Mar 6  14:22", event: "First contact on WhatsApp", flag: null },
@@ -37,16 +37,7 @@ export default function CaseDetail({ caseData, onBack }) {
     "Small sample needs corroboration",
   ]
 
-  {/* Upload modal */}
-{showUpload && (
-  <EvidenceUpload
-    officer={officer}
-    caseId={caseData.id}
-    onClose={() => setShowUpload(false)}
-  />
-)}
-
-async function handleAsk() {
+  async function handleAsk() {
     if (!question.trim()) return
     const userQuestion = question
     setQuestion("")
@@ -56,8 +47,10 @@ async function handleAsk() {
       { role: "user", content: userQuestion }
     ])
 
-    const loadDiv = { role: "system", content: "Analyzing evidence..." }
-    setCopilotMessages(prev => [...prev, loadDiv])
+    setCopilotMessages(prev => [
+      ...prev,
+      { role: "system", content: "Analyzing evidence..." }
+    ])
 
     try {
       const res = await fetch("http://localhost:8000/api/query", {
@@ -82,13 +75,18 @@ async function handleAsk() {
   }
 
   return (
-    <div style={{
-      maxWidth: "900px",
-      margin: "0 auto",
-      padding: "40px 24px"
-    }}>
+    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "40px 24px" }}>
 
-      {/* ── HEADER ── */}
+      {/* Upload modal */}
+      {showUpload && officer && (
+        <EvidenceUpload
+          officer={officer}
+          caseId={caseData?.id || "KL-DEMO-2024-001"}
+          onClose={() => setShowUpload(false)}
+        />
+      )}
+
+      {/* Header */}
       <div style={{
         display: "flex",
         alignItems: "center",
@@ -97,96 +95,70 @@ async function handleAsk() {
       }}>
         <div>
           <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.15em",
-            color: "#7c5cfc",
-            textTransform: "uppercase",
-            marginBottom: "6px"
+            fontSize: "11px", fontWeight: 600,
+            letterSpacing: "0.15em", color: "#7c5cfc",
+            textTransform: "uppercase", marginBottom: "6px"
           }}>
             {caseData.id}
           </div>
           <h1 style={{
-            fontSize: "28px",
-            fontWeight: 700,
+            fontSize: "28px", fontWeight: 700,
             letterSpacing: "-0.02em"
           }}>
             {caseData.name}
           </h1>
         </div>
-        <button onClick={onBack} style={{
-          background: "transparent",
-          border: "1px solid #232636",
-          borderRadius: "6px",
-          color: "#9aa0b8",
-          padding: "8px 16px",
-          cursor: "pointer",
-          fontSize: "13px"
-        }}>
-          ← Back to Cases
-        </button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            onClick={() => setShowUpload(true)}
+            style={{
+              background: "#7c5cfc", border: "none",
+              borderRadius: "6px", color: "white",
+              padding: "8px 16px", cursor: "pointer",
+              fontSize: "13px", fontWeight: 600
+            }}
+          >
+            + Upload evidence
+          </button>
+          <button onClick={onBack} style={{
+            background: "transparent",
+            border: "1px solid #232636",
+            borderRadius: "6px", color: "#9aa0b8",
+            padding: "8px 16px", cursor: "pointer",
+            fontSize: "13px"
+          }}>
+            ← Back to Cases
+          </button>
+        </div>
       </div>
-      <button
-  onClick={() => setShowUpload(true)}
-  style={{
-    background: "#7c5cfc",
-    border: "none",
-    borderRadius: "6px",
-    color: "white",
-    padding: "8px 16px",
-    cursor: "pointer",
-    fontSize: "13px",
-    fontWeight: 600,
-    marginRight: "8px"
-  }}
->
-  + Upload evidence
-</button>
 
-      {/* ── SECTION A: DUAL RISK SCORES ── */}
+      {/* Section A: Risk Scores */}
       <SectionLabel label="⚡ Risk Assessment" />
       <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: "16px",
-        marginBottom: "32px"
+        display: "grid", gridTemplateColumns: "1fr 1fr",
+        gap: "16px", marginBottom: "32px"
       }}>
-        {/* Active Risk */}
         <div style={{
-          background: "#1a0a0a",
-          border: "1px solid #ff6b6b",
-          borderRadius: "10px",
-          padding: "24px"
+          background: "#1a0a0a", border: "1px solid #ff6b6b",
+          borderRadius: "10px", padding: "24px"
         }}>
           <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.15em",
-            color: "#ff6b6b",
-            textTransform: "uppercase",
-            marginBottom: "12px"
+            fontSize: "11px", fontWeight: 600,
+            letterSpacing: "0.15em", color: "#ff6b6b",
+            textTransform: "uppercase", marginBottom: "12px"
           }}>
             ⚡ Rescue Urgency
           </div>
           <div style={{
-            fontSize: "52px",
-            fontWeight: 700,
-            color: "#ff6b6b",
-            lineHeight: 1,
-            marginBottom: "16px"
+            fontSize: "52px", fontWeight: 700,
+            color: "#ff6b6b", lineHeight: 1, marginBottom: "16px"
           }}>
             {caseData.activeRisk}
-            <span style={{
-              fontSize: "20px",
-              color: "#555d7a"
-            }}>/100</span>
+            <span style={{ fontSize: "20px", color: "#555d7a" }}>/100</span>
           </div>
           <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "#ff6b6b",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
+            fontSize: "11px", fontWeight: 600, color: "#ff6b6b",
+            textTransform: "uppercase", letterSpacing: "0.1em",
             marginBottom: "12px"
           }}>
             Active Risk Score
@@ -197,52 +169,33 @@ async function handleAsk() {
             "Contact frequency +400%"
           ].map((s, i) => (
             <div key={i} style={{
-              fontSize: "12px",
-              color: "#9aa0b8",
-              padding: "4px 0",
-              borderBottom: "1px solid #1a0000"
-            }}>
-              → {s}
-            </div>
+              fontSize: "12px", color: "#9aa0b8",
+              padding: "4px 0", borderBottom: "1px solid #1a0000"
+            }}>→ {s}</div>
           ))}
         </div>
 
-        {/* Case Risk */}
         <div style={{
-          background: "#0f0a1a",
-          border: "1px solid #7c5cfc",
-          borderRadius: "10px",
-          padding: "24px"
+          background: "#0f0a1a", border: "1px solid #7c5cfc",
+          borderRadius: "10px", padding: "24px"
         }}>
           <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.15em",
-            color: "#7c5cfc",
-            textTransform: "uppercase",
-            marginBottom: "12px"
+            fontSize: "11px", fontWeight: 600,
+            letterSpacing: "0.15em", color: "#7c5cfc",
+            textTransform: "uppercase", marginBottom: "12px"
           }}>
             📁 Prosecution Strength
           </div>
           <div style={{
-            fontSize: "52px",
-            fontWeight: 700,
-            color: "#7c5cfc",
-            lineHeight: 1,
-            marginBottom: "16px"
+            fontSize: "52px", fontWeight: 700,
+            color: "#7c5cfc", lineHeight: 1, marginBottom: "16px"
           }}>
             {caseData.caseRisk}
-            <span style={{
-              fontSize: "20px",
-              color: "#555d7a"
-            }}>/100</span>
+            <span style={{ fontSize: "20px", color: "#555d7a" }}>/100</span>
           </div>
           <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "#7c5cfc",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
+            fontSize: "11px", fontWeight: 600, color: "#7c5cfc",
+            textTransform: "uppercase", letterSpacing: "0.1em",
             marginBottom: "12px"
           }}>
             Case Risk Score
@@ -254,62 +207,44 @@ async function handleAsk() {
             "Platform migration confirmed"
           ].map((s, i) => (
             <div key={i} style={{
-              fontSize: "12px",
-              color: "#9aa0b8",
-              padding: "4px 0",
-              borderBottom: "1px solid #0a0020"
-            }}>
-              → {s}
-            </div>
+              fontSize: "12px", color: "#9aa0b8",
+              padding: "4px 0", borderBottom: "1px solid #0a0020"
+            }}>→ {s}</div>
           ))}
         </div>
       </div>
 
-      {/* ── SECTION B: ADVERSARIAL AGENTS ── */}
+      {/* Section B: Adversarial Agents */}
       <SectionLabel label="⚖ Adversarial Agent Analysis" />
       <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: "16px",
-        marginBottom: "16px"
+        display: "grid", gridTemplateColumns: "1fr 1fr",
+        gap: "16px", marginBottom: "16px"
       }}>
-        {/* Agent A */}
         <div style={{
-          background: "#111318",
-          border: "1px solid #4caf7d",
-          borderRadius: "10px",
-          padding: "20px"
+          background: "#111318", border: "1px solid #4caf7d",
+          borderRadius: "10px", padding: "20px"
         }}>
           <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "#4caf7d",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
+            fontSize: "11px", fontWeight: 600, color: "#4caf7d",
+            textTransform: "uppercase", letterSpacing: "0.1em",
             marginBottom: "16px"
           }}>
             Agent A — Prosecutor
           </div>
           {agentAClaims.map((c, i) => (
             <div key={i} style={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "flex-start",
-              marginBottom: "10px"
+              display: "flex", gap: "8px",
+              alignItems: "flex-start", marginBottom: "10px"
             }}>
               <span style={{ color: "#4caf7d", flexShrink: 0 }}>✓</span>
               <div>
-                <span style={{
-                  fontSize: "13px",
-                  color: "#e8eaf0"
-                }}>
+                <span style={{ fontSize: "13px", color: "#e8eaf0" }}>
                   {c.claim}
                 </span>
                 <span style={{
                   fontSize: "10px",
                   color: c.strength === "HIGH" ? "#ff6b6b" : "#f5a623",
-                  marginLeft: "8px",
-                  fontWeight: 600
+                  marginLeft: "8px", fontWeight: 600
                 }}>
                   [{c.strength}]
                 </span>
@@ -318,37 +253,24 @@ async function handleAsk() {
           ))}
         </div>
 
-        {/* Agent B */}
         <div style={{
-          background: "#111318",
-          border: "1px solid #4a9eff",
-          borderRadius: "10px",
-          padding: "20px"
+          background: "#111318", border: "1px solid #4a9eff",
+          borderRadius: "10px", padding: "20px"
         }}>
           <div style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "#4a9eff",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
+            fontSize: "11px", fontWeight: 600, color: "#4a9eff",
+            textTransform: "uppercase", letterSpacing: "0.1em",
             marginBottom: "16px"
           }}>
             Agent B — Defender
           </div>
           {agentBChallenges.map((c, i) => (
             <div key={i} style={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "flex-start",
-              marginBottom: "10px"
+              display: "flex", gap: "8px",
+              alignItems: "flex-start", marginBottom: "10px"
             }}>
               <span style={{ color: "#4a9eff", flexShrink: 0 }}>✗</span>
-              <span style={{
-                fontSize: "13px",
-                color: "#9aa0b8"
-              }}>
-                {c}
-              </span>
+              <span style={{ fontSize: "13px", color: "#9aa0b8" }}>{c}</span>
             </div>
           ))}
         </div>
@@ -356,83 +278,48 @@ async function handleAsk() {
 
       {/* Net Confidence */}
       <div style={{
-        background: "#111318",
-        border: "1px solid #232636",
-        borderRadius: "10px",
-        padding: "16px 20px",
-        marginBottom: "32px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between"
+        background: "#111318", border: "1px solid #232636",
+        borderRadius: "10px", padding: "16px 20px",
+        marginBottom: "32px", display: "flex",
+        alignItems: "center", justifyContent: "space-between"
       }}>
         <div>
-          <span style={{
-            fontSize: "13px",
-            color: "#9aa0b8"
-          }}>
+          <span style={{ fontSize: "13px", color: "#9aa0b8" }}>
             Net Confidence:
           </span>
           <span style={{
-            fontSize: "20px",
-            fontWeight: 700,
-            color: "#f5a623",
-            marginLeft: "12px"
+            fontSize: "20px", fontWeight: 700,
+            color: "#f5a623", marginLeft: "12px"
           }}>
             34.1/100
           </span>
-          <span style={{
-            fontSize: "13px",
-            color: "#9aa0b8",
-            marginLeft: "12px"
-          }}>
+          <span style={{ fontSize: "13px", color: "#9aa0b8", marginLeft: "12px" }}>
             — Gather more evidence before acting
           </span>
         </div>
-        <div style={{
-          fontSize: "11px",
-          color: "#555d7a"
-        }}>
+        <div style={{ fontSize: "11px", color: "#555d7a" }}>
           Final decision: Investigator only
         </div>
       </div>
 
-      {/* ── SECTION C: EVIDENCE COPILOT ── */}
+      {/* Section C: Evidence Copilot */}
       <SectionLabel label="💬 Evidence Copilot" />
       <div style={{
-        background: "#111318",
-        border: "1px solid #232636",
-        borderRadius: "10px",
-        padding: "20px",
-        marginBottom: "32px"
+        background: "#111318", border: "1px solid #232636",
+        borderRadius: "10px", padding: "20px", marginBottom: "32px"
       }}>
-        <div style={{
-          fontSize: "12px",
-          color: "#555d7a",
-          marginBottom: "16px"
-        }}>
+        <div style={{ fontSize: "12px", color: "#555d7a", marginBottom: "16px" }}>
           Ask questions about this case in Malayalam or English
         </div>
-
-        {/* Messages */}
-        <div style={{
-          marginBottom: "16px",
-          maxHeight: "200px",
-          overflowY: "auto"
-        }}>
+        <div style={{ marginBottom: "16px", maxHeight: "200px", overflowY: "auto" }}>
           <div style={{
-            background: "#1a1d26",
-            borderRadius: "6px",
-            padding: "10px 14px",
-            marginBottom: "8px",
-            fontSize: "13px",
-            color: "#9aa0b8"
+            background: "#1a1d26", borderRadius: "6px",
+            padding: "10px 14px", marginBottom: "8px",
+            fontSize: "13px", color: "#9aa0b8"
           }}>
             <span style={{
-              fontSize: "10px",
-              color: "#7c5cfc",
-              fontWeight: 600,
-              display: "block",
-              marginBottom: "4px"
+              fontSize: "10px", color: "#7c5cfc",
+              fontWeight: 600, display: "block", marginBottom: "4px"
             }}>
               INVESTIGATOR
             </span>
@@ -441,20 +328,15 @@ async function handleAsk() {
           {copilotMessages.map((m, i) => (
             <div key={i} style={{
               background: m.role === "user" ? "#1a1d26" : "#0f0a1a",
-              border: m.role === "system"
-                ? "1px solid #2d2250" : "none",
-              borderRadius: "6px",
-              padding: "10px 14px",
-              marginBottom: "8px",
-              fontSize: "13px",
+              border: m.role === "system" ? "1px solid #2d2250" : "none",
+              borderRadius: "6px", padding: "10px 14px",
+              marginBottom: "8px", fontSize: "13px",
               color: m.role === "user" ? "#9aa0b8" : "#e8eaf0"
             }}>
               <span style={{
                 fontSize: "10px",
                 color: m.role === "user" ? "#555d7a" : "#7c5cfc",
-                fontWeight: 600,
-                display: "block",
-                marginBottom: "4px"
+                fontWeight: 600, display: "block", marginBottom: "4px"
               }}>
                 {m.role === "user" ? "INVESTIGATOR" : "CASEMINDS COPILOT"}
               </span>
@@ -462,8 +344,6 @@ async function handleAsk() {
             </div>
           ))}
         </div>
-
-        {/* Input */}
         <div style={{ display: "flex", gap: "8px" }}>
           <input
             value={question}
@@ -471,66 +351,44 @@ async function handleAsk() {
             onKeyDown={e => e.key === "Enter" && handleAsk()}
             placeholder="Ask about this case in Malayalam or English..."
             style={{
-              flex: 1,
-              background: "#1a1d26",
-              border: "1px solid #232636",
-              borderRadius: "6px",
-              padding: "10px 14px",
-              color: "#e8eaf0",
-              fontSize: "13px",
-              outline: "none"
+              flex: 1, background: "#1a1d26",
+              border: "1px solid #232636", borderRadius: "6px",
+              padding: "10px 14px", color: "#e8eaf0",
+              fontSize: "13px", outline: "none"
             }}
           />
-          <button
-            onClick={handleAsk}
-            style={{
-              background: "#7c5cfc",
-              border: "none",
-              borderRadius: "6px",
-              padding: "10px 20px",
-              color: "white",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer"
-            }}
-          >
+          <button onClick={handleAsk} style={{
+            background: "#7c5cfc", border: "none",
+            borderRadius: "6px", padding: "10px 20px",
+            color: "white", fontSize: "13px",
+            fontWeight: 600, cursor: "pointer"
+          }}>
             Ask
           </button>
         </div>
       </div>
 
-      {/* ── SECTION D: CHRONOCASE TIMELINE ── */}
+      {/* Section D: ChronoCase Timeline */}
       <SectionLabel label="📅 ChronoCase — Case Timeline" />
       <div style={{
-        background: "#111318",
-        border: "1px solid #232636",
-        borderRadius: "10px",
-        padding: "20px",
-        marginBottom: "32px",
-        position: "relative"
+        background: "#111318", border: "1px solid #232636",
+        borderRadius: "10px", padding: "20px",
+        marginBottom: "32px", position: "relative"
       }}>
         <div style={{
-          position: "absolute",
-          left: "44px",
-          top: "20px",
-          bottom: "20px",
-          width: "1px",
-          background: "#232636"
+          position: "absolute", left: "44px",
+          top: "20px", bottom: "20px",
+          width: "1px", background: "#232636"
         }} />
-
         {timelineEvents.map((event, i) => (
           <div key={i} style={{
-            display: "flex",
-            gap: "16px",
+            display: "flex", gap: "16px",
             alignItems: "flex-start",
-            marginBottom: "16px",
-            position: "relative"
+            marginBottom: "16px", position: "relative"
           }}>
-            {/* Dot */}
             {event.flag !== "GAP" && (
               <div style={{
-                width: "10px",
-                height: "10px",
+                width: "10px", height: "10px",
                 borderRadius: "50%",
                 background: event.flag === "HIGH" ? "#ff6b6b"
                   : event.flag === "MEDIUM" ? "#f5a623"
@@ -540,45 +398,30 @@ async function handleAsk() {
                 borderColor: event.flag === "HIGH" ? "#ff6b6b"
                   : event.flag === "MEDIUM" ? "#f5a623"
                   : "#232636",
-                flexShrink: 0,
-                marginTop: "4px",
-                marginLeft: "29px",
-                zIndex: 1
+                flexShrink: 0, marginTop: "4px",
+                marginLeft: "29px", zIndex: 1
               }} />
             )}
-
-            {/* GAP box */}
             {event.flag === "GAP" && (
               <div style={{
-                width: "100%",
-                background: "#1a0a0a",
-                border: "1px dashed #ff6b6b",
-                borderRadius: "6px",
-                padding: "10px 16px",
-                marginLeft: "44px",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px"
+                width: "100%", background: "#1a0a0a",
+                border: "1px dashed #ff6b6b", borderRadius: "6px",
+                padding: "10px 16px", marginLeft: "44px",
+                display: "flex", alignItems: "center", gap: "10px"
               }}>
                 <span style={{ fontSize: "16px" }}>⚠</span>
                 <span style={{
-                  fontSize: "13px",
-                  color: "#ff6b6b",
-                  fontWeight: 600
+                  fontSize: "13px", color: "#ff6b6b", fontWeight: 600
                 }}>
                   {event.event}
                 </span>
               </div>
             )}
-
-            {/* Normal event */}
             {event.flag !== "GAP" && (
               <div>
                 <span style={{
-                  fontFamily: "monospace",
-                  fontSize: "12px",
-                  color: "#555d7a",
-                  marginRight: "12px"
+                  fontFamily: "monospace", fontSize: "12px",
+                  color: "#555d7a", marginRight: "12px"
                 }}>
                   {event.date}
                 </span>
@@ -596,118 +439,79 @@ async function handleAsk() {
         ))}
       </div>
 
-      {/* ── SECTION E: LEADRANK ── */}
+      {/* Section E: LeadRank */}
       <SectionLabel label="👥 LeadRank — Suspect Priority" />
       <div style={{
-        background: "#111318",
-        border: "1px solid #232636",
-        borderRadius: "10px",
-        padding: "20px",
-        marginBottom: "32px"
+        background: "#111318", border: "1px solid #232636",
+        borderRadius: "10px", padding: "20px", marginBottom: "32px"
       }}>
         <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "16px"
+          display: "flex", alignItems: "center",
+          justifyContent: "space-between", marginBottom: "16px"
         }}>
           <div>
             <div style={{
-              fontWeight: 600,
-              fontSize: "15px",
-              marginBottom: "4px"
+              fontWeight: 600, fontSize: "15px", marginBottom: "4px"
             }}>
               {caseData.suspect}
             </div>
-            <div style={{
-              display: "flex",
-              gap: "8px",
-              flexWrap: "wrap"
-            }}>
-              {[
-                "HASH_MATCH",
-                "SECRECY_INDUCTION",
-                "PLATFORM_MIGRATION",
-                "GPS_STRIPPED"
-              ].map((tag, i) => (
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              {["HASH_MATCH", "SECRECY_INDUCTION",
+                "PLATFORM_MIGRATION", "GPS_STRIPPED"].map((tag, i) => (
                 <span key={i} style={{
-                  fontSize: "10px",
-                  background: "#1a1d26",
-                  color: "#7c5cfc",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  fontWeight: 600
+                  fontSize: "10px", background: "#1a1d26",
+                  color: "#7c5cfc", padding: "2px 8px",
+                  borderRadius: "4px", fontWeight: 600
                 }}>
                   {tag}
                 </span>
               ))}
             </div>
+            {/* Section F: Annotations */}
+<SectionLabel label="📝 Case Annotations" />
+<Annotations
+  caseId={caseData.id}
+  officer={officer}
+/>
           </div>
-          <div style={{
-            display: "flex",
-            gap: "16px",
-            alignItems: "center"
-          }}>
+          <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
             <div style={{ textAlign: "center" }}>
               <div style={{
-                fontSize: "22px",
-                fontWeight: 700,
-                color: "#ff6b6b"
+                fontSize: "22px", fontWeight: 700, color: "#ff6b6b"
               }}>
                 {caseData.activeRisk}
               </div>
               <div style={{
-                fontSize: "9px",
-                color: "#555d7a",
-                textTransform: "uppercase"
-              }}>
-                Active
-              </div>
+                fontSize: "9px", color: "#555d7a", textTransform: "uppercase"
+              }}>Active</div>
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{
-                fontSize: "22px",
-                fontWeight: 700,
-                color: "#7c5cfc"
+                fontSize: "22px", fontWeight: 700, color: "#7c5cfc"
               }}>
                 {caseData.caseRisk}
               </div>
               <div style={{
-                fontSize: "9px",
-                color: "#555d7a",
-                textTransform: "uppercase"
-              }}>
-                Case
-              </div>
+                fontSize: "9px", color: "#555d7a", textTransform: "uppercase"
+              }}>Case</div>
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{
-                fontSize: "22px",
-                fontWeight: 700,
-                color: "#f5a623"
+                fontSize: "22px", fontWeight: 700, color: "#f5a623"
               }}>
                 34.1
               </div>
               <div style={{
-                fontSize: "9px",
-                color: "#555d7a",
-                textTransform: "uppercase"
-              }}>
-                Net
-              </div>
+                fontSize: "9px", color: "#555d7a", textTransform: "uppercase"
+              }}>Net</div>
             </div>
           </div>
         </div>
         <button style={{
-          background: "#7c5cfc",
-          border: "none",
-          borderRadius: "6px",
-          padding: "10px 20px",
-          color: "white",
-          fontSize: "13px",
-          fontWeight: 600,
-          cursor: "pointer",
-          width: "100%"
+          background: "#7c5cfc", border: "none",
+          borderRadius: "6px", padding: "10px 20px",
+          color: "white", fontSize: "13px",
+          fontWeight: 600, cursor: "pointer", width: "100%"
         }}>
           Generate Court Report
         </button>
@@ -720,14 +524,10 @@ async function handleAsk() {
 function SectionLabel({ label }) {
   return (
     <div style={{
-      fontSize: "11px",
-      fontWeight: 600,
-      letterSpacing: "0.15em",
-      color: "#555d7a",
-      textTransform: "uppercase",
-      marginBottom: "16px",
-      paddingBottom: "8px",
-      borderBottom: "1px solid #232636"
+      fontSize: "11px", fontWeight: 600,
+      letterSpacing: "0.15em", color: "#555d7a",
+      textTransform: "uppercase", marginBottom: "16px",
+      paddingBottom: "8px", borderBottom: "1px solid #232636"
     }}>
       {label}
     </div>

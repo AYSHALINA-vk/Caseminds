@@ -12,16 +12,16 @@ export default function CaseDetail({ caseData, onBack, officer }) {
   ])
   const [question, setQuestion] = useState("")
 
-  const timelineEvents = [
-    { date: "Mar 6  14:22", event: "First contact on WhatsApp", flag: null },
-    { date: "Mar 7  22:15", event: "Late night contact", flag: "ODD_HOUR" },
-    { date: "Mar 9  22:14", event: "Physical meeting proposed — Lulu Mall Kochi", flag: "HIGH" },
-    { date: "Mar 10 23:44", event: "Secrecy induction: don't tell your parents", flag: "HIGH" },
-    { date: "Mar 11 23:01", event: "Platform migration attempt to Telegram", flag: "MEDIUM" },
-    { date: "Mar 12 20:02", event: "Call from Kochi Central tower — LOCATION CHANGE", flag: "HIGH" },
-    { date: "GAP", event: "SUSPICIOUS SILENCE — 6 hours 12 minutes", flag: "GAP" },
-    { date: "Mar 13 02:18", event: "Post-gap contact from Ernakulam tower", flag: "MEDIUM" },
-  ]
+//   const timelineEvents = [
+//     { date: "Mar 6  14:22", event: "First contact on WhatsApp", flag: null },
+//     { date: "Mar 7  22:15", event: "Late night contact", flag: "ODD_HOUR" },
+//     { date: "Mar 9  22:14", event: "Physical meeting proposed — Lulu Mall Kochi", flag: "HIGH" },
+//     { date: "Mar 10 23:44", event: "Secrecy induction: don't tell your parents", flag: "HIGH" },
+//     { date: "Mar 11 23:01", event: "Platform migration attempt to Telegram", flag: "MEDIUM" },
+//     { date: "Mar 12 20:02", event: "Call from Kochi Central tower — LOCATION CHANGE", flag: "HIGH" },
+//     { date: "GAP", event: "SUSPICIOUS SILENCE — 6 hours 12 minutes", flag: "GAP" },
+//     { date: "Mar 13 02:18", event: "Post-gap contact from Ernakulam tower", flag: "MEDIUM" },
+//   ]
 
   const agentAClaims = [
     { claim: "47 contacts with victim in 6 days", strength: "HIGH" },
@@ -368,76 +368,10 @@ export default function CaseDetail({ caseData, onBack, officer }) {
         </div>
       </div>
 
+      
       {/* Section D: ChronoCase Timeline */}
-      <SectionLabel label="📅 ChronoCase — Case Timeline" />
-      <div style={{
-        background: "#111318", border: "1px solid #232636",
-        borderRadius: "10px", padding: "20px",
-        marginBottom: "32px", position: "relative"
-      }}>
-        <div style={{
-          position: "absolute", left: "44px",
-          top: "20px", bottom: "20px",
-          width: "1px", background: "#232636"
-        }} />
-        {timelineEvents.map((event, i) => (
-          <div key={i} style={{
-            display: "flex", gap: "16px",
-            alignItems: "flex-start",
-            marginBottom: "16px", position: "relative"
-          }}>
-            {event.flag !== "GAP" && (
-              <div style={{
-                width: "10px", height: "10px",
-                borderRadius: "50%",
-                background: event.flag === "HIGH" ? "#ff6b6b"
-                  : event.flag === "MEDIUM" ? "#f5a623"
-                  : event.flag === "ODD_HOUR" ? "#f5a623"
-                  : "#232636",
-                border: "2px solid",
-                borderColor: event.flag === "HIGH" ? "#ff6b6b"
-                  : event.flag === "MEDIUM" ? "#f5a623"
-                  : "#232636",
-                flexShrink: 0, marginTop: "4px",
-                marginLeft: "29px", zIndex: 1
-              }} />
-            )}
-            {event.flag === "GAP" && (
-              <div style={{
-                width: "100%", background: "#1a0a0a",
-                border: "1px dashed #ff6b6b", borderRadius: "6px",
-                padding: "10px 16px", marginLeft: "44px",
-                display: "flex", alignItems: "center", gap: "10px"
-              }}>
-                <span style={{ fontSize: "16px" }}>⚠</span>
-                <span style={{
-                  fontSize: "13px", color: "#ff6b6b", fontWeight: 600
-                }}>
-                  {event.event}
-                </span>
-              </div>
-            )}
-            {event.flag !== "GAP" && (
-              <div>
-                <span style={{
-                  fontFamily: "monospace", fontSize: "12px",
-                  color: "#555d7a", marginRight: "12px"
-                }}>
-                  {event.date}
-                </span>
-                <span style={{
-                  fontSize: "13px",
-                  color: event.flag === "HIGH" ? "#ff6b6b"
-                    : event.flag === "MEDIUM" ? "#f5a623"
-                    : "#9aa0b8"
-                }}>
-                  {event.event}
-                </span>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+<SectionLabel label="📅 ChronoCase — Case Timeline" />
+<ChronoCase />
 
       {/* Section E: LeadRank */}
       <SectionLabel label="👥 LeadRank — Suspect Priority" />
@@ -467,6 +401,8 @@ export default function CaseDetail({ caseData, onBack, officer }) {
                 </span>
               ))}
             </div>
+
+            
             {/* Section F: Annotations */}
 <SectionLabel label="📝 Case Annotations" />
 <Annotations
@@ -517,6 +453,470 @@ export default function CaseDetail({ caseData, onBack, officer }) {
         </button>
       </div>
 
+    </div>
+  )
+}
+
+function ChronoCase() {
+  const [activeView, setActiveView] = useState("all")
+
+  const chatEvents = [
+    {
+      id: "msg_1", time: "Mar 6  14:22", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "Hey, how are you? I'm Arun. Saw your profile.",
+      flag: null, platform: "WhatsApp"
+    },
+    {
+      id: "msg_2", time: "Mar 6  16:45", type: "MESSAGE",
+      from: "Victim", to: "Accused_X",
+      content: "Hi, I'm okay. Do I know you?",
+      flag: null, platform: "WhatsApp"
+    },
+    {
+      id: "msg_3", time: "Mar 6  16:47", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "No but I'd like to get to know you. How old are you?",
+      flag: "MEDIUM", platform: "WhatsApp"
+    },
+    {
+      id: "msg_4", time: "Mar 7  22:15", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "You awake? I was thinking about you.",
+      flag: "ODD_HOUR", platform: "WhatsApp"
+    },
+    {
+      id: "msg_5", time: "Mar 9  22:14", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "Come near Lulu Mall Kochi on March 12 at 8 PM",
+      flag: "HIGH", platform: "WhatsApp"
+    },
+    {
+      id: "msg_6", time: "Mar 9  23:02", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "Let's move to Telegram, more private. @arun_private_tg",
+      flag: "HIGH", platform: "WhatsApp"
+    },
+    {
+      id: "msg_7", time: "Mar 10 08:14", type: "MESSAGE",
+      from: "Victim", to: "Accused_X",
+      content: "Why telegram?",
+      flag: null, platform: "WhatsApp"
+    },
+    {
+      id: "msg_8", time: "Mar 10 23:44", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "Don't tell your parents about us okay? They won't understand.",
+      flag: "HIGH", platform: "WhatsApp"
+    },
+    {
+      id: "msg_9", time: "Mar 11 22:30", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "[DELETED MESSAGE]",
+      flag: "HIGH", platform: "WhatsApp",
+      deleted: true,
+      ghost: "Victim replied: 'yes okay I will come'"
+    },
+    {
+      id: "msg_10", time: "Mar 12 19:55", type: "MESSAGE",
+      from: "Accused_X", to: "Victim",
+      content: "I'm near Ernakulam, coming to meet you. Call me 9876543210",
+      flag: "HIGH", platform: "WhatsApp"
+    },
+  ]
+
+  const callEvents = [
+    {
+      id: "C001", time: "Mar 6  14:18", type: "CALL",
+      duration: 42, tower: "Ernakulam", flag: null
+    },
+    {
+      id: "C002", time: "Mar 7  22:10", type: "CALL",
+      duration: 187, tower: "Ernakulam", flag: "ODD_HOUR"
+    },
+    {
+      id: "C003", time: "Mar 9  22:55", type: "CALL",
+      duration: 324, tower: "Ernakulam", flag: "ODD_HOUR"
+    },
+    {
+      id: "C004", time: "Mar 10 23:41", type: "CALL",
+      duration: 156, tower: "Ernakulam", flag: "ODD_HOUR"
+    },
+    {
+      id: "C005", time: "Mar 12 20:02", type: "CALL",
+      duration: 891, tower: "Kochi Central", flag: "LOCATION_CHANGE"
+    },
+    {
+      id: "C006", time: "Mar 12 20:58", type: "CALL",
+      duration: 44, tower: "Kochi Central", flag: "UNKNOWN_CONTACT"
+    },
+    {
+      id: "C007", time: "Mar 13 02:18", type: "CALL",
+      duration: 12, tower: "Ernakulam", flag: "POST_GAP"
+    },
+  ]
+
+  const flagColor = (flag) => {
+    if (flag === "HIGH" || flag === "LOCATION_CHANGE") return "#ff6b6b"
+    if (flag === "MEDIUM" || flag === "ODD_HOUR") return "#f5a623"
+    if (flag === "POST_GAP" || flag === "UNKNOWN_CONTACT") return "#f5a623"
+    return "#555d7a"
+  }
+
+  const flagBg = (flag) => {
+    if (flag === "HIGH" || flag === "LOCATION_CHANGE") return "#2e1212"
+    if (flag === "MEDIUM" || flag === "ODD_HOUR") return "#2e2008"
+    return "#1a1d26"
+  }
+
+  return (
+    <div style={{
+      background: "#111318",
+      border: "0.5px solid #232636",
+      borderRadius: "10px",
+      overflow: "hidden",
+      marginBottom: "32px"
+    }}>
+
+      {/* Tab selector */}
+      <div style={{
+        display: "flex",
+        borderBottom: "0.5px solid #232636"
+      }}>
+        {[
+          { key: "all",      label: "🕐 Full Timeline" },
+          { key: "messages", label: `💬 Messages (${chatEvents.length})` },
+          { key: "calls",    label: `📞 Calls (${callEvents.length})` },
+        ].map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveView(tab.key)}
+            style={{
+              flex: 1, padding: "12px",
+              background: activeView === tab.key ? "#1a1d26" : "transparent",
+              border: "none",
+              borderBottom: activeView === tab.key
+                ? "2px solid #7c5cfc" : "2px solid transparent",
+              color: activeView === tab.key ? "#e8eaf0" : "#555d7a",
+              fontSize: "12px", fontWeight: 600,
+              cursor: "pointer", letterSpacing: "0.06em"
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding: "20px" }}>
+
+        {/* ── MESSAGES VIEW ── */}
+        {activeView === "messages" && (
+          <div>
+            <div style={{
+              background: "#0f0a1a",
+              border: "0.5px solid #2d2250",
+              borderRadius: "8px", padding: "10px 14px",
+              marginBottom: "16px", fontSize: "12px", color: "#7c5cfc"
+            }}>
+              💬 {chatEvents.length} messages · Platform: WhatsApp ·
+              Victim response time dropped from 2.5hrs → 45sec
+            </div>
+            {chatEvents.map((msg, i) => (
+              <div key={msg.id} style={{
+                display: "flex",
+                justifyContent: msg.from === "Victim"
+                  ? "flex-end" : "flex-start",
+                marginBottom: "10px"
+              }}>
+                <div style={{
+                  maxWidth: "75%",
+                  background: msg.deleted ? "#1a0a0a"
+                    : msg.from === "Victim" ? "#0f0a1a" : "#1a1d26",
+                  border: `0.5px solid ${msg.flag
+                    ? flagColor(msg.flag) : "#232636"}`,
+                  borderRadius: "8px", padding: "10px 14px"
+                }}>
+                  {/* Sender */}
+                  <div style={{
+                    fontSize: "10px", fontWeight: 600,
+                    color: msg.from === "Victim" ? "#7c5cfc" : "#4a9eff",
+                    marginBottom: "4px", letterSpacing: "0.06em"
+                  }}>
+                    {msg.from.toUpperCase()}
+                  </div>
+
+                  {/* Content */}
+                  <div style={{
+                    fontSize: "13px",
+                    color: msg.deleted ? "#ff6b6b" : "#e8eaf0",
+                    fontStyle: msg.deleted ? "italic" : "normal",
+                    marginBottom: "6px", lineHeight: 1.5
+                  }}>
+                    {msg.content}
+                  </div>
+
+                  {/* Ghost signal */}
+                  {msg.ghost && (
+                    <div style={{
+                      background: "#2e1212",
+                      border: "0.5px solid #ff6b6b",
+                      borderRadius: "4px", padding: "6px 10px",
+                      fontSize: "11px", color: "#ff6b6b",
+                      marginBottom: "6px"
+                    }}>
+                      👻 GhostTrail: {msg.ghost}
+                    </div>
+                  )}
+
+                  {/* Footer */}
+                  <div style={{
+                    display: "flex", justifyContent: "space-between",
+                    alignItems: "center"
+                  }}>
+                    <span style={{
+                      fontSize: "10px", color: "#555d7a",
+                      fontFamily: "monospace"
+                    }}>
+                      {msg.time}
+                    </span>
+                    {msg.flag && (
+                      <span style={{
+                        fontSize: "9px", fontWeight: 600,
+                        padding: "2px 6px", borderRadius: "3px",
+                        background: flagBg(msg.flag),
+                        color: flagColor(msg.flag)
+                      }}>
+                        {msg.flag}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── CALLS VIEW ── */}
+        {activeView === "calls" && (
+          <div>
+            <div style={{
+              background: "#0a2018",
+              border: "0.5px solid #4caf7d",
+              borderRadius: "8px", padding: "10px 14px",
+              marginBottom: "16px", fontSize: "12px", color: "#4caf7d"
+            }}>
+              📞 Call duration pattern: 42s → 187s → 324s → 156s →
+              <span style={{ color: "#ff6b6b", fontWeight: 700 }}>
+                {" "}891s ← spike
+              </span>
+              → 12s ← post-gap drop
+            </div>
+
+            {/* Duration bar chart */}
+            <div style={{
+              background: "#1a1d26", borderRadius: "8px",
+              padding: "16px", marginBottom: "16px"
+            }}>
+              <div style={{
+                fontSize: "10px", color: "#555d7a",
+                letterSpacing: "0.1em", marginBottom: "12px"
+              }}>
+                CALL DURATION PATTERN
+              </div>
+              {callEvents.map(call => (
+                <div key={call.id} style={{
+                  display: "flex", alignItems: "center",
+                  gap: "12px", marginBottom: "8px"
+                }}>
+                  <span style={{
+                    fontSize: "10px", color: "#555d7a",
+                    fontFamily: "monospace", minWidth: "80px"
+                  }}>
+                    {call.time.slice(0, 6)}
+                  </span>
+                  <div style={{
+                    flex: 1, height: "20px",
+                    background: "#111318", borderRadius: "4px",
+                    overflow: "hidden"
+                  }}>
+                    <div style={{
+                      height: "100%",
+                      width: `${(call.duration / 891) * 100}%`,
+                      background: call.flag === "LOCATION_CHANGE"
+                        ? "#ff6b6b"
+                        : call.flag === "ODD_HOUR"
+                        ? "#f5a623" : "#7c5cfc",
+                      borderRadius: "4px",
+                      transition: "width 0.3s"
+                    }} />
+                  </div>
+                  <span style={{
+                    fontSize: "11px", fontWeight: 600,
+                    color: call.flag === "LOCATION_CHANGE"
+                      ? "#ff6b6b" : "#9aa0b8",
+                    minWidth: "40px", textAlign: "right",
+                    fontFamily: "monospace"
+                  }}>
+                    {call.duration}s
+                  </span>
+                  <span style={{
+                    fontSize: "10px", color: "#555d7a",
+                    minWidth: "80px"
+                  }}>
+                    {call.tower}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Call list */}
+            {callEvents.map(call => (
+              <div key={call.id} style={{
+                background: "#1a1d26",
+                border: `0.5px solid ${call.flag
+                  ? flagColor(call.flag) : "#232636"}`,
+                borderRadius: "8px", padding: "12px 16px",
+                marginBottom: "8px", display: "flex",
+                justifyContent: "space-between", alignItems: "center"
+              }}>
+                <div>
+                  <div style={{
+                    fontSize: "13px", color: "#e8eaf0",
+                    fontWeight: 600, marginBottom: "4px"
+                  }}>
+                    📞 {call.duration}s call
+                  </div>
+                  <div style={{
+                    fontSize: "11px", color: "#555d7a",
+                    fontFamily: "monospace"
+                  }}>
+                    {call.time} · Tower: {call.tower}
+                  </div>
+                </div>
+                {call.flag && (
+                  <span style={{
+                    fontSize: "10px", fontWeight: 600,
+                    padding: "3px 8px", borderRadius: "4px",
+                    background: flagBg(call.flag),
+                    color: flagColor(call.flag)
+                  }}>
+                    {call.flag}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── FULL TIMELINE VIEW ── */}
+        {activeView === "all" && (
+          <div>
+            <div style={{
+              background: "#111318", borderRadius: "8px",
+              padding: "10px 14px", marginBottom: "16px",
+              fontSize: "12px", color: "#555d7a",
+              border: "0.5px solid #232636"
+            }}>
+              All events in chronological order ·
+              💬 messages + 📞 calls + ⚠ gaps
+            </div>
+
+            {/* Merge and sort all events */}
+            {[...chatEvents, ...callEvents]
+              .sort((a, b) => a.time.localeCompare(b.time))
+              .map((event, i, arr) => (
+              <div key={event.id}>
+                {/* Gap detection between events */}
+                {i > 0 && event.time.startsWith("Mar 12 20") &&
+                 arr[i-1].time.startsWith("Mar 12") && (
+                  <div style={{
+                    background: "#1a0a0a",
+                    border: "1px dashed #ff6b6b",
+                    borderRadius: "6px", padding: "10px 16px",
+                    margin: "8px 0", display: "flex",
+                    alignItems: "center", gap: "10px"
+                  }}>
+                    <span>⚠</span>
+                    <span style={{
+                      fontSize: "13px", color: "#ff6b6b", fontWeight: 600
+                    }}>
+                      SUSPICIOUS SILENCE — 6 hours 12 minutes
+                    </span>
+                  </div>
+                )}
+
+                <div style={{
+                  display: "flex", gap: "12px",
+                  alignItems: "flex-start", marginBottom: "8px"
+                }}>
+                  {/* Icon */}
+                  <div style={{
+                    width: "28px", height: "28px",
+                    borderRadius: "50%", flexShrink: 0,
+                    display: "flex", alignItems: "center",
+                    justifyContent: "center", fontSize: "12px",
+                    background: event.type === "MESSAGE"
+                      ? "#0f0a1a" : "#0a2018",
+                    border: `0.5px solid ${event.flag
+                      ? flagColor(event.flag) : "#232636"}`
+                  }}>
+                    {event.type === "MESSAGE" ? "💬" : "📞"}
+                  </div>
+
+                  {/* Content */}
+                  <div style={{
+                    flex: 1,
+                    background: "#1a1d26",
+                    border: `0.5px solid ${event.flag
+                      ? flagColor(event.flag) : "#232636"}`,
+                    borderRadius: "8px", padding: "10px 14px"
+                  }}>
+                    <div style={{
+                      display: "flex", justifyContent: "space-between",
+                      alignItems: "flex-start", marginBottom: "4px"
+                    }}>
+                      <span style={{
+                        fontSize: "10px", fontFamily: "monospace",
+                        color: "#555d7a"
+                      }}>
+                        {event.time}
+                      </span>
+                      {event.flag && (
+                        <span style={{
+                          fontSize: "9px", fontWeight: 600,
+                          padding: "2px 6px", borderRadius: "3px",
+                          background: flagBg(event.flag),
+                          color: flagColor(event.flag)
+                        }}>
+                          {event.flag}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{
+                      fontSize: "13px",
+                      color: event.deleted ? "#ff6b6b" : "#e8eaf0",
+                      fontStyle: event.deleted ? "italic" : "normal"
+                    }}>
+                      {event.type === "MESSAGE"
+                        ? `${event.from}: "${event.content}"`
+                        : `📞 ${event.duration}s call · ${event.tower} tower`
+                      }
+                    </div>
+                    {event.ghost && (
+                      <div style={{
+                        marginTop: "6px", fontSize: "11px",
+                        color: "#ff6b6b", fontStyle: "italic"
+                      }}>
+                        👻 {event.ghost}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

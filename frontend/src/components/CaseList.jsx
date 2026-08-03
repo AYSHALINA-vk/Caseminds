@@ -7,6 +7,8 @@ export default function CaseList({ cases, officer, onSelectCase, onBack }) {
   const immediateCases = cases.filter(c => c.immediateAction)
   const activeCases    = cases.filter(c => !c.immediateAction && c.status === "ACTIVE")
   const solvedCases    = cases.filter(c => c.status === "SOLVED")
+  const [searchQuery, setSearchQuery] = useState("")
+  const filtered        = searchCases(cases, searchQuery)
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "40px 24px" }}>
@@ -83,6 +85,102 @@ export default function CaseList({ cases, officer, onSelectCase, onBack }) {
           }}>
             Active investigations
           </h2>
+          {/* Search bar */}
+<div style={{
+  position: "relative",
+  marginBottom: "24px"
+}}>
+  <input
+    type="text"
+    value={searchQuery}
+    onChange={e => setSearchQuery(e.target.value)}
+    placeholder="Search by case name, suspect, location, or case number..."
+    style={{
+      width: "100%",
+      background: "#111318",
+      border: `0.5px solid ${searchQuery ? "#7c5cfc" : "#232636"}`,
+      borderRadius: "8px",
+      padding: "12px 16px 12px 40px",
+      color: "#e8eaf0",
+      fontSize: "13px",
+      outline: "none",
+      transition: "border-color 0.2s"
+    }}
+  />
+  {/* Search icon */}
+  <span style={{
+    position: "absolute",
+    left: "14px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    color: searchQuery ? "#7c5cfc" : "#555d7a",
+    fontSize: "14px"
+  }}>
+    🔍
+  </span>
+  {/* Clear button */}
+  {searchQuery && (
+    <button
+      onClick={() => setSearchQuery("")}
+      style={{
+        position: "absolute",
+        right: "12px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        background: "transparent",
+        border: "none",
+        color: "#555d7a",
+        cursor: "pointer",
+        fontSize: "16px",
+        padding: "0"
+      }}
+    >
+      ×
+    </button>
+  )}
+</div>
+
+{/* Search results count */}
+{searchQuery && (
+  <div style={{
+    fontSize: "12px",
+    color: "#555d7a",
+    marginBottom: "16px",
+    marginTop: "-16px"
+  }}>
+    {filtered.length === 0
+      ? `No cases match "${searchQuery}"`
+      : `${filtered.length} case${filtered.length !== 1 ? "s" : ""} match "${searchQuery}"`
+    }
+  </div>
+)}
+
+{filtered.length === 0 && searchQuery && (
+  <div style={{
+    textAlign: "center",
+    padding: "48px 24px",
+    color: "#555d7a"
+  }}>
+    <div style={{ fontSize: "36px", marginBottom: "12px" }}>🔍</div>
+    <p style={{ fontSize: "15px", color: "#9aa0b8", marginBottom: "8px" }}>
+      No cases found for "{searchQuery}"
+    </p>
+    <p style={{ fontSize: "13px", marginBottom: "20px" }}>
+      Try searching by case number, suspect name, or location
+    </p>
+    <button
+      onClick={() => setSearchQuery("")}
+      style={{
+        background: "#7c5cfc", border: "none",
+        borderRadius: "8px", padding: "10px 20px",
+        color: "white", fontSize: "13px",
+        fontWeight: 600, cursor: "pointer"
+      }}
+    >
+      Clear search
+    </button>
+  </div>
+)}
         </div>
         <div style={{ display: "flex", gap: "8px" }}>
           {officer?.role === "JUNIOR" && (
@@ -249,6 +347,21 @@ export default function CaseList({ cases, officer, onSelectCase, onBack }) {
     </div>
   )
 }
+function searchCases(cases, query) {
+  if (!query.trim()) return cases
+  const q = query.toLowerCase()
+  return cases.filter(c => {
+    const inName    = c.name?.toLowerCase().includes(q)
+    const inId      = c.id?.toLowerCase().includes(q)
+    const inSuspect = c.suspect?.toLowerCase().includes(q)
+    const inSignals = c.signals?.some(s =>
+      s.toLowerCase().includes(q)
+    )
+    return inName || inId || inSuspect || inSignals
+  })
+}
+
+
 
 function CaseCard({ caseData, onClick, urgent }) {
   return (

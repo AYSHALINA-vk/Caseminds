@@ -456,26 +456,26 @@ def query_copilot(req: QueryRequest):
     }
 
 
-@app.get("/api/mediascan/{case_id}")
-def get_mediascan(case_id: str):
-    """Run MediaScan on all images in a case."""
-    metadata  = load_metadata()
-    hash_db   = load_hashes()
+# @app.get("/api/mediascan/{case_id}")
+# def get_mediascan(case_id: str):
+#     """Run MediaScan on all images in a case."""
+#     metadata  = load_metadata()
+#     hash_db   = load_hashes()
 
-    from metadata_pipeline import parse_metadata
-    from image_classifier import run_media_scan
+#     from metadata_pipeline import parse_metadata
+#     from image_classifier import run_media_scan
 
-    parsed = [parse_metadata(f) for f in metadata["files"]]
+#     parsed = [parse_metadata(f) for f in metadata["files"]]
 
-    # Check hash matches
-    hash_results = {}
-    for f in metadata["files"]:
-        if f.get("phash"):
-            result = check_hash_database(f["phash"], hash_db)
-            hash_results[f["file"]] = result["match"]
+#     # Check hash matches
+#     hash_results = {}
+#     for f in metadata["files"]:
+#         if f.get("phash"):
+#             result = check_hash_database(f["phash"], hash_db)
+#             hash_results[f["file"]] = result["match"]
 
-    results = run_media_scan(parsed, hash_results)
-    return results
+#     results = run_media_scan(parsed, hash_results)
+#     return results
 
 # ── Helper functions ──────────────────────────────────────────────
 

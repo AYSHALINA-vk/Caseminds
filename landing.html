@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CaseMinds — Agentic Child Protection Investigation Assistant</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #0a0b0f;
+  color: #e8eaf0;
+  line-height: 1.6;
+}
+
+/* ── NAVBAR ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,11,15,0.95);
+  border-bottom: 0.5px solid #232636;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.nav-logo span { color: #7c5cfc; }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: #9aa0b8;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: #e8eaf0; }
+
+.nav-cta {
+  background: #7c5cfc;
+  color: white !important;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600 !important;
+}
+
+.nav-cta:hover {
+  background: #6a4de8;
+  color: white !important;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124,92,252,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #0f0a1a;
+  border: 0.5px solid #2d2250;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7c5cfc;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  max-width: 800px;
+}
+
+.hero h1 span { color: #7c5cfc; }
+
+.hero-subtitle {
+  font-size: 20px;
+  color: #9aa0b8;
+  max-width: 600px;
+  margin: 0 auto 16px;
+  line-height: 1.6;
+}
+
+.hero-tagline {
+  font-size: 16px;
+  color: #7c5cfc;
+  font-style: italic;
+  margin-bottom: 40px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+}
+
+.btn-primary {
+  background: #7c5cfc;
+  color: white;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover { background: #6a4de8; }
+
+.btn-secondary {
+  background: transparent;
+  color: #e8eaf0;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 0.5px solid #232636;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.btn-secondary:hover { border-color: #7c5cfc; color: #7c5cfc; }
+
+/* ── STATS ── */
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+  padding: 40px;
+  border-top: 0.5px solid #232636;
+  border-bottom: 0.5px solid #232636;
+  background: #111318;
+}
+
+.stat-item { text-align: center; }
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: #7c5cfc;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555d7a;
+}
+
+/* ── SECTION ── */
+.section {
+  padding: 80px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #7c5cfc;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.section-subtitle {
+  font-size: 16px;
+  color: #9aa0b8;
+  max-width: 560px;
+  margin-bottom: 48px;
+  line-height: 1.7;
+}
+
+/* ── PROBLEM ── */
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.problem-card {
+  background: #111318;
+  border: 0.5px solid #232636;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.problem-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ff6b6b;
+  margin-bottom: 8px;
+  font-family: monospace;
+}
+
+.problem-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.problem-desc {
+  font-size: 13px;
+  color: #9aa0b8;
+  line-height: 1.6;
+}
+
+/* ── FEATURES ── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  background: #111318;
+  border: 0.5px solid #232636;
+  border-radius: 12px;
+  padding: 28px;
+  transition: border-color 0.2s;
+}
+
+.feature-card:hover { border-color: #7c5cfc; }
+
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.feature-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.feature-desc {
+  font-size: 13px;
+  color: #9aa0b8;
+  line-height: 1.7;
+}
+
+.feature-tag {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: #0f0a1a;
+  color: #7c5cfc;
+  border: 0.5px solid #2d2250;
+  letter-spacing: 0.08em;
+}
+
+/* ── DIFFERENTIATOR ── */
+.diff-section {
+  background: #111318;
+  border: 0.5px solid #232636;
+  border-radius: 16px;
+  padding: 48px;
+  margin: 80px 40px;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.agents-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.agent-card {
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.agent-a {
+  background: #0a2018;
+  border: 0.5px solid #4caf7d;
+}
+
+.agent-b {
+  background: #0a1e35;
+  border: 0.5px solid #4a9eff;
+}
+
+.agent-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.agent-a .agent-label { color: #4caf7d; }
+.agent-b .agent-label { color: #4a9eff; }
+
+.agent-claim {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  align-items: flex-start;
+}
+
+.check { color: #4caf7d; flex-shrink: 0; }
+.cross { color: #4a9eff; flex-shrink: 0; }
+
+.net-bar {
+  margin-top: 24px;
+  background: #1a1d26;
+  border: 0.5px solid #232636;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  grid-column: 1 / -1;
+}
+
+.net-score {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f5a623;
+}
+
+.net-label {
+  font-size: 13px;
+  color: #9aa0b8;
+}
+
+/* ── CAPABILITIES ── */
+.capabilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.cap-item {
+  background: #111318;
+  border: 0.5px solid #232636;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.cap-number {
+  font-size: 11px;
+  font-family: monospace;
+  color: #555d7a;
+  min-width: 24px;
+  margin-top: 2px;
+}
+
+.cap-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cap-desc {
+  font-size: 11px;
+  color: #9aa0b8;
+  margin-top: 2px;
+}
+
+/* ── TECH STACK ── */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.tech-item {
+  background: #111318;
+  border: 0.5px solid #232636;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.tech-name {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: monospace;
+  color: #7c5cfc;
+  margin-bottom: 4px;
+}
+
+.tech-role {
+  font-size: 11px;
+  color: #555d7a;
+}
+
+/* ── CTA ── */
+.cta-section {
+  text-align: center;
+  padding: 100px 40px;
+  background: #111318;
+  border-top: 0.5px solid #232636;
+}
+
+.cta-section h2 {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-section p {
+  font-size: 16px;
+  color: #9aa0b8;
+  margin-bottom: 40px;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: #0a0b0f;
+  border-top: 0.5px solid #232636;
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-logo {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.footer-logo span { color: #7c5cfc; }
+
+.footer-text {
+  font-size: 12px;
+  color: #555d7a;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-size: 12px;
+  color: #555d7a;
+  text-decoration: none;
+}
+
+.footer-links a:hover { color: #7c5cfc; }
+
+/* ── SECURITY BADGE ── */
+.security-bar {
+  background: #0f0a1a;
+  border: 0.5px solid #2d2250;
+  border-radius: 8px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 0 40px 48px;
+  max-width: 1020px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.security-item {
+  font-size: 12px;
+  color: #7c5cfc;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── LOGIN MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+  background: #111318;
+  border: 0.5px solid #232636;
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: transparent;
+  border: none;
+  color: #555d7a;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  font-size: 13px;
+  color: #9aa0b8;
+  margin-bottom: 28px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #9aa0b8;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  width: 100%;
+  background: #1a1d26;
+  border: 0.5px solid #232636;
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #e8eaf0;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 16px;
+  font-family: monospace;
+}
+
+.form-input:focus { border-color: #7c5cfc; }
+
+.form-btn {
+  width: 100%;
+  background: #7c5cfc;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.form-btn:hover { background: #6a4de8; }
+
+.demo-creds {
+  background: #0f0a1a;
+  border: 0.5px solid #2d2250;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 20px;
+  font-size: 12px;
+  color: #9aa0b8;
+  font-family: monospace;
+  line-height: 2;
+}
+
+.demo-creds strong { color: #7c5cfc; }
+
+.error-msg {
+  background: #2e1212;
+  border: 0.5px solid #ff6b6b;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #ff6b6b;
+  margin-bottom: 12px;
+  display: none;
+}
+
+.error-msg.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav>
+  <div class="nav-logo">Case<span>Minds</span></div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#capabilities">Capabilities</a></li>
+    <li><a href="#tech">Tech Stack</a></li>
+    <li><a href="#" class="nav-cta" onclick="openLogin()">Officer Login</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div>
+    <div class="hero-badge">Hac'KP 2026 · Kerala Police · ACPIA</div>
+    <h1>Case<span>Minds</span></h1>
+    <p class="hero-subtitle">
+      Agentic AI investigation platform for child protection.
+      Built for Kerala Police.
+    </p>
+    <p class="hero-tagline">
+      "AI that finds the connections. You make the call."
+    </p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="openLogin()">
+        Access Investigation System
+      </button>
+      <a href="https://github.com/AYSHALINA-vk/Caseminds"
+         target="_blank" class="btn-secondary">
+        View on GitHub →
+      </a>
+    </div>
+    <div style="display:flex; gap:32px; justify-content:center; flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#7c5cfc;">12</div>
+        <div style="font-size:11px;color:#555d7a;text-transform:uppercase;letter-spacing:0.1em;">ACPIA Capabilities</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#7c5cfc;">&lt;60s</div>
+        <div style="font-size:11px;color:#555d7a;text-transform:uppercase;letter-spacing:0.1em;">Evidence Processing</div>
+      </div>
+      <div style="font-size:28px;font-weight:700;color:#7c5cfc;text-align:center;">
+        <div>2</div>
+        <div style="font-size:11px;color:#555d7a;text-transform:uppercase;letter-spacing:0.1em;">Adversarial Agents</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:28px;font-weight:700;color:#7c5cfc;">100%</div>
+        <div style="font-size:11px;color:#555d7a;text-transform:uppercase;letter-spacing:0.1em;">On-Premise</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECURITY BAR ── -->
+<div class="security-bar">
+  <div class="security-item">🔒 On-premise deployment</div>
+  <div class="security-item">🔒 No evidence leaves the network</div>
+  <div class="security-item">🔒 SHA-256 chain of custody</div>
+  <div class="security-item">🔒 Immutable audit trail</div>
+  <div class="security-item">🔒 Role-based access control</div>
+</div>
+
+<!-- ── PROBLEM ── -->
+<section class="section" id="problem">
+  <div class="section-label">The Problem</div>
+  <h2 class="section-title">
+    Investigators are drowning<br/>in digital evidence
+  </h2>
+  <p class="section-subtitle">
+    Child protection investigations involve massive volumes of
+    digital evidence across multiple platforms. The evidence
+    exists. The connection is missed.
+  </p>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="problem-number">50,000+</div>
+      <div class="problem-title">Messages per case</div>
+      <div class="problem-desc">
+        WhatsApp, Telegram, email  manually searched,
+        manually cross-referenced, manually understood.
+      </div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-number">80%</div>
+      <div class="problem-title">Time organizing data</div>
+      <div class="problem-desc">
+        Only 20% of investigation time is spent
+        actually investigating. The rest is data management.
+      </div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-number">2</div>
+      <div class="problem-title">Different urgency clocks</div>
+      <div class="problem-desc">
+        Rescue urgency and prosecution urgency are not
+        the same. No existing tool separates them.
+      </div>
+    </div>
+  </div>
+  <div style="background:#1a0a0a;border:0.5px solid #ff6b6b;border-radius:12px;padding:24px;text-align:center;">
+    <div style="font-size:18px;font-weight:700;color:#ff6b6b;margin-bottom:8px;">
+      The real cost of slow investigation
+    </div>
+    <div style="font-size:14px;color:#9aa0b8;max-width:600px;margin:0 auto;">
+      While the investigator chases the wrong suspect — the real one
+      has days to flee, destroy evidence, or continue harming the victim.
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="section" id="features">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">Four stages.<br/>One platform.</h2>
+  <p class="section-subtitle">
+    Upload any evidence. CaseMinds processes, argues,
+    and surfaces  you decide.
+  </p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📥</div>
+      <div class="feature-title">Evidence Ingestion</div>
+      <div class="feature-desc">
+        Any file format  WhatsApp exports, images, call records,
+        PDFs, device dumps. SHA-256 hashed on arrival.
+        Chain of custody sealed before any AI touches it.
+      </div>
+      <div class="feature-tag">MIME ROUTING · SHA-256 · AUDIT TRAIL</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">Parallel AI Pipelines</div>
+      <div class="feature-desc">
+        NLP extracts entities. Hash pipeline flags known content.
+        Metadata pipeline maps GPS. Synthetic detection catches
+        deepfakes. All running simultaneously in under 60 seconds.
+      </div>
+      <div class="feature-tag">NLP · PHASH · EXIF · EFFICIENTNET</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <div class="feature-title">Evidence Copilot</div>
+      <div class="feature-desc">
+        Ask questions in Malayalam or English. Get cited answers
+        from the actual evidence. Semantic search finds meaning,
+        not just keywords  even in Manglish.
+      </div>
+      <div class="feature-tag">RAG · CHROMADB · MALAYALAM · OLLAMA</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📅</div>
+      <div class="feature-title">ChronoCase Timeline</div>
+      <div class="feature-desc">
+        Every timestamp from every source merged into one
+        interactive timeline. Suspicious gaps flagged automatically.
+        You cannot search for a silence  ChronoCase finds it.
+      </div>
+      <div class="feature-tag">CROSS-SOURCE · GAP DETECTION · UTC</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Dual Risk Scoring</div>
+      <div class="feature-desc">
+        Case Risk scores prosecution strength over weeks.
+        Active Risk scores current danger over 72 hours.
+        Two independent clocks. Rescue urgency never buried
+        under case-building volume.
+      </div>
+      <div class="feature-tag">CASE RISK · ACTIVE RISK · LEADRANK</div>
+    </div>
+    <div class="feature-card" style="border-color:#7c5cfc;">
+      <div class="feature-icon">⚖</div>
+      <div class="feature-title">Adversarial Agents</div>
+      <div class="feature-desc">
+        Agent A builds the prosecution case. Agent B challenges
+        every claim with citations from actual pipeline data.
+        The investigator sees both always. The system is
+        architecturally incapable of a single false verdict.
+      </div>
+      <div class="feature-tag" style="color:#7c5cfc;border-color:#7c5cfc;">
+        STRUCTURED JSON · VERIFIED CITATIONS · NO HALLUCINATION
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ADVERSARIAL AGENTS SECTION ── -->
+<div class="diff-section" id="agents">
+  <div class="section-label">The Core Innovation</div>
+  <h2 class="section-title" style="margin-bottom:8px;">
+    AI that argues against itself
+  </h2>
+  <p style="font-size:16px;color:#9aa0b8;max-width:560px;line-height:1.7;">
+    Every other tool gives investigators one confident answer.
+    CaseMinds gives them both sides — prosecution and defense 
+    so no AI is ever making the decision.
+  </p>
+  <div class="agents-grid">
+    <div class="agent-card agent-a">
+      <div class="agent-label">Agent A — Prosecutor</div>
+      <div class="agent-claim"><span class="check">✓</span> 47 contacts with victim in 6 days [HIGH]</div>
+      <div class="agent-claim"><span class="check">✓</span> Secrecy induction detected [HIGH]</div>
+      <div class="agent-claim"><span class="check">✓</span> Physical meeting proposed [HIGH]</div>
+      <div class="agent-claim"><span class="check">✓</span> Platform migration to Telegram [MEDIUM]</div>
+    </div>
+    <div class="agent-card agent-b">
+      <div class="agent-label">Agent B — Defender</div>
+      <div class="agent-claim"><span class="cross">✗</span> Victim initiated 39 of 47 contacts</div>
+      <div class="agent-claim"><span class="cross">✗</span> GPS accuracy 800m — not court admissible</div>
+      <div class="agent-claim"><span class="cross">✗</span> Platform migration common for privacy</div>
+      <div class="agent-claim"><span class="cross">✗</span> Small sample needs corroboration</div>
+    </div>
+    <div class="net-bar">
+      <div>
+        <span style="font-size:13px;color:#9aa0b8;">Net Confidence: </span>
+        <span class="net-score">34.1/100</span>
+        <span style="font-size:13px;color:#9aa0b8;margin-left:12px;">
+          — Gather more evidence before acting
+        </span>
+      </div>
+      <div style="font-size:12px;color:#555d7a;">
+        Final decision: Investigator only
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CAPABILITIES ── -->
+<section class="section" id="capabilities">
+  <div class="section-label">Coverage</div>
+  <h2 class="section-title">All 12 ACPIA capabilities.<br/>Covered.</h2>
+  <p class="section-subtitle">
+    Every requirement from the Kerala Police problem statement
+    maps to a specific CaseMinds module.
+  </p>
+  <div class="capabilities-grid">
+    {[
+      ["01", "Content Analysis",        "NLP Pipeline"],
+      ["02", "Threat Identification",   "Hash Matching"],
+      ["03", "Source Correlation",      "Knowledge Graph"],
+      ["04", "Contextual Extraction",   "Evidence Copilot"],
+      ["05", "Activity Pattern",        "Active Risk Scorer"],
+      ["06", "Metadata Mapping",        "EXIF Pipeline"],
+      ["07", "Synthetic Detection",     "EfficientNet"],
+      ["08", "Timeline Reconstruction", "ChronoCase"],
+      ["09", "Intelligent Retrieval",   "RAG + ChromaDB"],
+      ["10", "Automated Reporting",     "Court Report"],
+      ["11", "Risk Assessment",         "Dual Scoring"],
+      ["12", "Intelligence Fusion",     "Agentic Orchestrator"],
+    ].map(([num, title, module]) => `
+      <div class="cap-item">
+        <div class="cap-number">${num}</div>
+        <div>
+          <div class="cap-text">${title}</div>
+          <div class="cap-desc">${module}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+</section>
+
+<!-- ── TECH STACK ── -->
+<section class="section" id="tech">
+  <div class="section-label">Technology</div>
+  <h2 class="section-title">Built to deploy.<br/>Not just to demo.</h2>
+  <p class="section-subtitle">
+    100% open source. On-premise. One docker-compose command.
+    No evidence ever leaves the police network.
+  </p>
+  <div class="tech-grid">
+    <div class="tech-item">
+      <div class="tech-name">FastAPI</div>
+      <div class="tech-role">Backend API</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">React</div>
+      <div class="tech-role">Frontend UI</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">ChromaDB</div>
+      <div class="tech-role">Vector Search</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">Neo4j</div>
+      <div class="tech-role">Knowledge Graph</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">PostgreSQL</div>
+      <div class="tech-role">Case Database</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">Ollama</div>
+      <div class="tech-role">Local LLM</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">spaCy</div>
+      <div class="tech-role">NLP + Malayalam</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">Docker</div>
+      <div class="tech-role">Deployment</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <h2>Every hour spent searching evidence is an hour a suspect has to run</h2>
+  <p>CaseMinds changes that. One upload. Every connection found. Every decision yours.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <button class="btn-primary" onclick="openLogin()">
+      Access Investigation System
+    </button>
+    <a href="https://github.com/AYSHALINA-vk/Caseminds"
+       target="_blank" class="btn-secondary">
+      View GitHub Repository →
+    </a>
+  </div>
+  <p style="margin-top:24px;font-size:13px;color:#555d7a;">
+    Built for Hac'KP 2026 · Kerala Police · ACPIA Problem Statement
+  </p>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">Case<span>Minds</span></div>
+  <div class="footer-text">
+    Hac'KP 2026 · Kerala Police · ACPIA · Built by Aysha
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/AYSHALINA-vk/Caseminds" target="_blank">
+      GitHub
+    </a>
+    <a href="http://localhost:5173" target="_blank">Live Demo</a>
+  </div>
+</footer>
+
+<!-- ── LOGIN MODAL ── -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeLogin()">×</button>
+    <div class="modal-title">Officer Authentication</div>
+    <div class="modal-subtitle">Authorized personnel only · All access logged</div>
+
+    <div id="errorMsg" class="error-msg">
+      Invalid Badge ID or password. Access denied.
+    </div>
+
+    <label class="form-label">Badge ID</label>
+    <input type="text" id="badgeInput" class="form-input"
+           placeholder="KP-XXXX"
+           onkeydown="if(event.key==='Enter')handleLogin()"/>
+
+    <label class="form-label">Password</label>
+    <input type="password" id="passInput" class="form-input"
+           placeholder="••••••••"
+           onkeydown="if(event.key==='Enter')handleLogin()"/>
+
+    <button class="form-btn" onclick="handleLogin()">
+      Access Investigation System
+    </button>
+
+    <div class="demo-creds">
+      <strong>Demo credentials:</strong><br/>
+      Senior: KP-1847 / senior123<br/>
+      Junior: KP-2241 / junior123
+    </div>
+  </div>
+</div>
+
+<script>
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const href = this.getAttribute('href')
+    if (href === '#') return
+    e.preventDefault()
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+  })
+})
+
+// Login modal
+function openLogin() {
+  document.getElementById('loginModal').classList.add('active')
+  document.getElementById('badgeInput').focus()
+}
+
+function closeLogin() {
+  document.getElementById('loginModal').classList.remove('active')
+  document.getElementById('errorMsg').classList.remove('show')
+  document.getElementById('badgeInput').value = ''
+  document.getElementById('passInput').value = ''
+}
+
+// Close modal on overlay click
+document.getElementById('loginModal').addEventListener('click', function(e) {
+  if (e.target === this) closeLogin()
+})
+
+// Officer credentials
+const OFFICERS = [
+  { badge: 'KP-1847', password: 'senior123', role: 'SENIOR' },
+  { badge: 'KP-2241', password: 'junior123', role: 'JUNIOR'  }
+]
+
+function handleLogin() {
+  const badge = document.getElementById('badgeInput').value.trim().toUpperCase()
+  const pass  = document.getElementById('passInput').value.trim()
+  const error = document.getElementById('errorMsg')
+
+  const officer = OFFICERS.find(o => o.badge === badge && o.password === pass)
+
+  if (officer) {
+    error.classList.remove('show')
+    // Redirect to React app
+    window.location.href = 'http://localhost:5173'
+  } else {
+    error.classList.add('show')
+  }
+}
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav')
+  if (window.scrollY > 50) {
+    nav.style.borderBottomColor = '#2d2250'
+  } else {
+    nav.style.borderBottomColor = '#232636'
+  }
+})
+</script>
+
+</body>
+</html>

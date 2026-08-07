@@ -1,7 +1,25 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import EvidenceUpload from "./EvidenceUpload"
 import Annotations from "./Annotations"
 import CourtReport from "./CourtReport"
+
+function useCountUp(target, duration = 800) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    let start = null
+    const step = (timestamp) => {
+      if (!start) start = timestamp
+      const progress = Math.min((timestamp - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+      setValue(target * eased)
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [target, duration])
+
+  return value
+}
 
 export default function CaseDetail({ caseData, onBack, officer }) {
   const [showUpload, setShowUpload] = useState(false)
@@ -13,6 +31,9 @@ export default function CaseDetail({ caseData, onBack, officer }) {
       content: `Based on chat_export.json message #10, Accused_X contacted the victim at 19:55 saying they were near Ernakulam and coming to meet. Call record C005 shows a 14-minute call from Kochi Central tower at 20:02. [Source: chat_export.json, call_records.csv]`
     }
   ])
+
+  const activeRiskDisplay = useCountUp(caseData.activeRisk)
+  const caseRiskDisplay = useCountUp(caseData.caseRisk)
 
   const agentAClaims = [
     { claim: "47 contacts with victim in 6 days", strength: "HIGH" },
@@ -34,7 +55,7 @@ export default function CaseDetail({ caseData, onBack, officer }) {
     setQuestion("")
 
     setCopilotMessages(prev => [...prev, { role: "user", content: userQuestion }])
-    setCopilotMessages(prev => [...prev, { role: "system", content: "Analyzing evidence..." }])
+    setCopilotMessages(prev => [...prev, { role: "system", content: "", typing: true }])
 
     try {
       const res = await fetch("http://localhost:8000/api/query", {
@@ -47,7 +68,7 @@ export default function CaseDetail({ caseData, onBack, officer }) {
         ...prev.slice(0, -1),
         { role: "system", content: data.answer }
       ])
-    } catch(e) {
+    } catch (e) {
       setCopilotMessages(prev => [
         ...prev.slice(0, -1),
         { role: "system", content: "Backend connection error. Make sure api_server is running on port 8000." }
@@ -134,7 +155,7 @@ export default function CaseDetail({ caseData, onBack, officer }) {
             fontSize: "52px", fontWeight: 700,
             color: "#ff6b6b", lineHeight: 1, marginBottom: "16px"
           }}>
-            {caseData.activeRisk}
+            {Math.round(activeRiskDisplay)}
             <span style={{ fontSize: "20px", color: "#555d7a" }}>/100</span>
           </div>
           <div style={{
@@ -165,7 +186,7 @@ export default function CaseDetail({ caseData, onBack, officer }) {
             fontSize: "52px", fontWeight: 700,
             color: "#7c5cfc", lineHeight: 1, marginBottom: "16px"
           }}>
-            {caseData.caseRisk}
+            {caseRiskDisplay.toFixed(1)}
             <span style={{ fontSize: "20px", color: "#555d7a" }}>/100</span>
           </div>
           <div style={{
@@ -274,19 +295,6 @@ export default function CaseDetail({ caseData, onBack, officer }) {
           Ask questions about this case in Malayalam or English
         </div>
         <div style={{ marginBottom: "16px", maxHeight: "200px", overflowY: "auto" }}>
-          <div style={{
-            background: "#1a1d26", borderRadius: "6px",
-            padding: "10px 14px", marginBottom: "8px",
-            fontSize: "13px", color: "#9aa0b8"
-          }}>
-            <span style={{
-              fontSize: "10px", color: "#7c5cfc",
-              fontWeight: 600, display: "block", marginBottom: "4px"
-            }}>
-              INVESTIGATOR
-            </span>
-            Who did the suspect contact on March 12?
-          </div>
           {copilotMessages.map((m, i) => (
             <div key={i} style={{
               background: m.role === "user" ? "#1a1d26" : "#0f0a1a",
@@ -302,7 +310,7 @@ export default function CaseDetail({ caseData, onBack, officer }) {
               }}>
                 {m.role === "user" ? "INVESTIGATOR" : "CASEMINDS COPILOT"}
               </span>
-              {m.content}
+              {m.typing ? <TypingIndicator /> : m.content}
             </div>
           ))}
         </div>
@@ -401,8 +409,37 @@ export default function CaseDetail({ caseData, onBack, officer }) {
   )
 }
 
+function TypingIndicator() {
+  return (
+    <div style={{ display: "flex", gap: "4px", padding: "4px 0" }}>
+      {[0, 1, 2].map(i => (
+        <span key={i} style={{
+          width: "6px", height: "6px", borderRadius: "50%",
+          background: "#7c5cfc",
+          animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite`
+        }} />
+      ))}
+      <style>{`
+        @keyframes pulse {
+          0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+          30% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 function ChronoCase() {
   const [activeView, setActiveView] = useState("all")
+  const [barsIn, setBarsIn] = useState(false)
+
+  useEffect(() => {
+    if (activeView === "calls") {
+      setBarsIn(false)
+      const timer = setTimeout(() => setBarsIn(true), 50)
+      return () => clearTimeout(timer)
+    }
+  }, [activeView])
 
   const chatEvents = [
     { id: "msg_1",  time: "Mar 6  14:22", type: "MESSAGE", from: "Accused_X", to: "Victim", content: "Hey, how are you? I'm Arun. Saw your profile.", flag: null, platform: "WhatsApp" },
@@ -444,6 +481,13 @@ function ChronoCase() {
       background: "#111318", border: "0.5px solid #232636",
       borderRadius: "10px", overflow: "hidden", marginBottom: "32px"
     }}>
+      <style>{`
+        @keyframes slideFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
       {/* Tabs */}
       <div style={{ display: "flex", borderBottom: "0.5px solid #232636" }}>
         {[
@@ -476,11 +520,12 @@ function ChronoCase() {
               💬 {chatEvents.length} messages · Platform: WhatsApp ·
               Victim response time dropped from 2.5hrs → 45sec
             </div>
-            {chatEvents.map(msg => (
+            {chatEvents.map((msg, i) => (
               <div key={msg.id} style={{
                 display: "flex",
                 justifyContent: msg.from === "Victim" ? "flex-end" : "flex-start",
-                marginBottom: "10px"
+                marginBottom: "10px",
+                animation: `slideFadeIn 0.4s ease-out ${i * 0.05}s both`
               }}>
                 <div style={{
                   maxWidth: "75%",
@@ -556,10 +601,11 @@ function ChronoCase() {
               }}>
                 CALL DURATION PATTERN
               </div>
-              {callEvents.map(call => (
+              {callEvents.map((call, i) => (
                 <div key={call.id} style={{
                   display: "flex", alignItems: "center",
-                  gap: "12px", marginBottom: "8px"
+                  gap: "12px", marginBottom: "8px",
+                  animation: `slideFadeIn 0.4s ease-out ${i * 0.08}s both`
                 }}>
                   <span style={{
                     fontSize: "10px", color: "#555d7a",
@@ -573,10 +619,11 @@ function ChronoCase() {
                   }}>
                     <div style={{
                       height: "100%",
-                      width: `${(call.duration / 891) * 100}%`,
+                      width: barsIn ? `${(call.duration / 891) * 100}%` : "0%",
                       background: call.flag === "LOCATION_CHANGE" ? "#ff6b6b"
                         : call.flag === "ODD_HOUR" ? "#f5a623" : "#7c5cfc",
-                      borderRadius: "4px"
+                      borderRadius: "4px",
+                      transition: `width 0.6s ease-out ${i * 0.08}s`
                     }} />
                   </div>
                   <span style={{
@@ -592,13 +639,14 @@ function ChronoCase() {
                 </div>
               ))}
             </div>
-            {callEvents.map(call => (
+            {callEvents.map((call, i) => (
               <div key={call.id} style={{
                 background: "#1a1d26",
                 border: `0.5px solid ${call.flag ? flagColor(call.flag) : "#232636"}`,
                 borderRadius: "8px", padding: "12px 16px",
                 marginBottom: "8px", display: "flex",
-                justifyContent: "space-between", alignItems: "center"
+                justifyContent: "space-between", alignItems: "center",
+                animation: `slideFadeIn 0.4s ease-out ${i * 0.05}s both`
               }}>
                 <div>
                   <div style={{
@@ -638,7 +686,9 @@ function ChronoCase() {
             {[...chatEvents, ...callEvents]
               .sort((a, b) => a.time.localeCompare(b.time))
               .map((event, i, arr) => (
-              <div key={event.id}>
+              <div key={event.id} style={{
+                animation: `slideFadeIn 0.4s ease-out ${i * 0.05}s both`
+              }}>
                 {i > 0 &&
                  event.time.startsWith("Mar 13") &&
                  arr[i-1].time.startsWith("Mar 12") && (

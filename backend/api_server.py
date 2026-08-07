@@ -454,7 +454,11 @@ def query_copilot(req: QueryRequest):
         "case_id":  req.case_id,
         "status":   "prototype_retrieval"
     }
+from lead_scoring import get_leadrank
 
+@app.get("/api/leadrank/{case_id}")
+def leadrank(case_id: str):
+    return get_leadrank(case_id)
 
 # @app.get("/api/mediascan/{case_id}")
 # def get_mediascan(case_id: str):
